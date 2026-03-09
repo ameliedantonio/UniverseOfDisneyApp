@@ -1,4 +1,4 @@
-package fr.isen.amelie.universeofdisneyapp.model
+package fr.isen.amelie.universeofdisneyapp.activity
 
 data class Universe(
     val id: String = "",

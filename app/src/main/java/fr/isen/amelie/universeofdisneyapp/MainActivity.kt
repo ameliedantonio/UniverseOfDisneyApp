@@ -24,7 +24,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import fr.isen.amelie.universeofdisneyapp.model.Movie
+import fr.isen.amelie.universeofdisneyapp.activity.Movie
 import fr.isen.amelie.universeofdisneyapp.screen.HomeScreen
 import fr.isen.amelie.universeofdisneyapp.screen.LoginScreen
 import fr.isen.amelie.universeofdisneyapp.screen.MovieDetailScreen

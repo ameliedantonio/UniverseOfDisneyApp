@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
-import fr.isen.amelie.universeofdisneyapp.model.Movie
-import fr.isen.amelie.universeofdisneyapp.model.MovieOwnerInfo
+import fr.isen.amelie.universeofdisneyapp.activity.Movie
+import fr.isen.amelie.universeofdisneyapp.activity.MovieOwnerInfo
 
 @Composable
 fun MovieDetailScreen(

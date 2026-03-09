@@ -14,15 +14,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
-import fr.isen.amelie.universeofdisneyapp.model.Movie
+import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
 @Composable
 fun MovieScreen(
@@ -31,59 +28,53 @@ fun MovieScreen(
     onBackToUniverses: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-    val db = FirebaseFirestore.getInstance()
+
+    val database = FirebaseDatabase.getInstance().reference
     val movies = remember { mutableStateListOf<Movie>() }
 
     LaunchedEffect(universeId) {
-        db.collection("movies")
-            .whereEqualTo("universeId", universeId)
-            .get()
-            .addOnSuccessListener { result ->
-                movies.clear()
-                for (document in result.documents) {
-                    val movie = document.toObject(Movie::class.java)
-                    if (movie != null) {
-                        movies.add(movie.copy(id = document.id))
+        database.child("movies")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    movies.clear()
+                    for (child in snapshot.children) {
+                        val movie = child.getValue(Movie::class.java)
+                        if (movie != null && movie.universeId == universeId) {
+                            movies.add(movie)
+                        }
                     }
                 }
-            }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
-        // TOP BAR
         AppTopBar(title = "Movies")
-
-        // CONTENU
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-
             Button(
                 onClick = onBackToUniverses,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Retour aux univers")
             }
-
             Spacer(modifier = Modifier.height(12.dp))
-
             Button(
                 onClick = onProfileClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Voir mon profil")
             }
-
             Spacer(modifier = Modifier.height(16.dp))
-
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+
                 items(movies) { movie ->
                     Card(
                         modifier = Modifier
@@ -91,14 +82,13 @@ fun MovieScreen(
                             .clickable { onMovieClick(movie) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-
-                            Text(text = movie.title)
-
-                            Text(text = "Sortie : ${movie.releaseDate}")
-
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(movie.title)
+                            Text("Sortie : ${movie.releaseDate}")
                             if (movie.category.isNotBlank()) {
-                                Text(text = "Catégorie : ${movie.category}")
+                                Text("Catégorie : ${movie.category}")
                             }
                         }
                     }

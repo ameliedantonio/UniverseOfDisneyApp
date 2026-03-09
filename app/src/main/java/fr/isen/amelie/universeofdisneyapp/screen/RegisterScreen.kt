@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.FirebaseDatabase
 
 @Composable
 fun RegisterScreen(
@@ -30,7 +30,7 @@ fun RegisterScreen(
     onGoToLogin: () -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+    val database = FirebaseDatabase.getInstance().reference
     val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
@@ -74,14 +74,14 @@ fun RegisterScreen(
                                 val user = auth.currentUser
 
                                 if (user != null) {
-                                    val userData = hashMapOf(
+                                    val userData = mapOf(
                                         "uid" to user.uid,
                                         "email" to email
                                     )
 
-                                    db.collection("users")
-                                        .document(user.uid)
-                                        .set(userData)
+                                    database.child("users")
+                                        .child(user.uid)
+                                        .setValue(userData)
                                         .addOnSuccessListener {
                                             Toast.makeText(
                                                 context,
@@ -93,7 +93,7 @@ fun RegisterScreen(
                                         .addOnFailureListener { e ->
                                             Toast.makeText(
                                                 context,
-                                                "Erreur Firestore : ${e.message}",
+                                                "Erreur Realtime DB : ${e.message}",
                                                 Toast.LENGTH_LONG
                                             ).show()
                                         }
