@@ -12,6 +12,7 @@ import fr.isen.amelie.universeofdisneyapp.model.Universe
 import fr.isen.amelie.universeofdisneyapp.screen.LoginScreen
 import fr.isen.amelie.universeofdisneyapp.screen.MovieDetailScreen
 import fr.isen.amelie.universeofdisneyapp.screen.MovieScreen
+import fr.isen.amelie.universeofdisneyapp.screen.ProfileScreen
 import fr.isen.amelie.universeofdisneyapp.screen.RegisterScreen
 import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
@@ -50,6 +51,18 @@ class MainActivity : ComponentActivity() {
                         onUniverseClick = { universe ->
                             selectedUniverse = universe
                             screen = "movies"
+                        },
+                        onProfileClick = {
+                            screen = "profile"
+                        }
+                    )
+
+                    "profile" -> ProfileScreen(
+                        onBackClick = {
+                            screen = "home"
+                        },
+                        onLogoutClick = {
+                            screen = "login"
                         }
                     )
 
@@ -58,6 +71,12 @@ class MainActivity : ComponentActivity() {
                         onMovieClick = { movie ->
                             selectedMovie = movie
                             screen = "movieDetail"
+                        },
+                        onBackToUniverses = {
+                            screen = "home"
+                        },
+                        onProfileClick = {
+                            screen = "profile"
                         }
                     )
 

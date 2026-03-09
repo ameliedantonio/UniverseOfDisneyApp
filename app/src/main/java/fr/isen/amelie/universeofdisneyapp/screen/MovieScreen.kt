@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -23,7 +24,9 @@ import fr.isen.amelie.universeofdisneyapp.model.Movie
 @Composable
 fun MovieScreen(
     universeId: String,
-    onMovieClick: (Movie) -> Unit
+    onMovieClick: (Movie) -> Unit,
+    onBackToUniverses: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
     val movies = remember { mutableStateListOf<Movie>() }
@@ -37,7 +40,7 @@ fun MovieScreen(
                 for (document in result.documents) {
                     val movie = document.toObject(Movie::class.java)
                     if (movie != null) {
-                        movies.add(movie)
+                        movies.add(movie.copy(id = document.id))
                     }
                 }
             }
@@ -49,6 +52,24 @@ fun MovieScreen(
             .padding(16.dp)
     ) {
         Text("Films")
+
+        Button(
+            onClick = onBackToUniverses,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+        ) {
+            Text("Retour aux univers")
+        }
+
+        Button(
+            onClick = onProfileClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+        ) {
+            Text("Voir mon profil")
+        }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
