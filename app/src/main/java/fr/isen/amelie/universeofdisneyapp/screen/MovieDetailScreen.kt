@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.model.Movie
 import fr.isen.amelie.universeofdisneyapp.model.MovieOwnerInfo
 
@@ -68,14 +69,12 @@ fun MovieDetailScreen(
                 "userEmail" to (user.email ?: "")
             )
 
-            // 1) Sauvegarde perso
             db.collection("users")
                 .document(user.uid)
                 .collection("movieStatuses")
                 .document(movie.id)
                 .set(statusData)
                 .addOnSuccessListener {
-                    // 2) Gestion partie partagée
                     if (status == "want_to_get_rid") {
                         val sharedData = hashMapOf(
                             "userEmail" to (user.email ?: ""),
@@ -103,7 +102,6 @@ fun MovieDetailScreen(
                                 ).show()
                             }
                     } else {
-                        // Si le statut n'est plus "want_to_get_rid", on retire du partagé
                         db.collection("shared_get_rid")
                             .document(movie.id)
                             .collection("users")
@@ -147,85 +145,88 @@ fun MovieDetailScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Top
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = movie.title)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        AppTopBar(title = movie.title)
 
-        Text(text = "Date de sortie : ${movie.releaseDate}")
-        Text(text = "Univers : ${movie.universeId}")
-        Text(text = "Catégorie : ${movie.category}")
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = { saveMovieStatus("watched") },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("Watched")
-        }
+            Text(text = "Date de sortie : ${movie.releaseDate}")
+            Text(text = "Univers : ${movie.universeId}")
+            Text(text = "Catégorie : ${movie.category}")
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = { saveMovieStatus("want_to_watch") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Want to watch")
-        }
+            Button(
+                onClick = { saveMovieStatus("watched") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Watched")
+            }
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
-            onClick = { saveMovieStatus("owned") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Own on DVD / Blu-ray")
-        }
+            Button(
+                onClick = { saveMovieStatus("want_to_watch") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Want to watch")
+            }
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
-            onClick = { saveMovieStatus("want_to_get_rid") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Want to get rid of")
-        }
+            Button(
+                onClick = { saveMovieStatus("owned") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Own on DVD / Blu-ray")
+            }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Text("Utilisateurs qui veulent se débarrasser de ce film")
+            Button(
+                onClick = { saveMovieStatus("want_to_get_rid") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Want to get rid of")
+            }
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.weight(1f, fill = false)
-        ) {
-            items(sharedUsers) { userInfo ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(text = userInfo.userEmail)
-                        Text(text = "Veut s'en débarrasser")
+            Text("Utilisateurs qui veulent se débarrasser de ce film")
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.weight(1f, fill = false)
+            ) {
+                items(sharedUsers) { userInfo ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(text = userInfo.userEmail)
+                            Text(text = "Veut s'en débarrasser")
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = onBackClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Retour")
+            Button(
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Retour")
+            }
         }
     }
 }

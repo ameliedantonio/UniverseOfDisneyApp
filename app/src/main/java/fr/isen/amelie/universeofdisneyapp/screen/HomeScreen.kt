@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.model.Movie
 
 @Composable
@@ -39,42 +40,55 @@ fun HomeScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text("Home")
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // TOP BAR
+        AppTopBar(title = "Home")
 
-        Text("Film aléatoire")
+        // CONTENU
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Text("Film aléatoire")
 
-        randomMovie?.let { movie ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(movie.title)
-                    Text("Sortie : ${movie.releaseDate}")
+            Spacer(modifier = Modifier.height(12.dp))
 
-                    if (movie.category.isNotBlank()) {
-                        Text("Catégorie : ${movie.category}")
-                    }
+            randomMovie?.let { movie ->
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
 
-                    Button(
-                        onClick = { onMovieClick(movie) },
-                        modifier = Modifier.fillMaxWidth()
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Text("Voir le détail")
+
+                        Text(movie.title)
+
+                        Text("Sortie : ${movie.releaseDate}")
+
+                        if (movie.category.isNotBlank()) {
+                            Text("Catégorie : ${movie.category}")
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Button(
+                            onClick = { onMovieClick(movie) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Voir le détail")
+                        }
                     }
                 }
-            }
-        } ?: Text("Aucun film trouvé")
+
+            } ?: Text("Aucun film trouvé")
+        }
     }
 }

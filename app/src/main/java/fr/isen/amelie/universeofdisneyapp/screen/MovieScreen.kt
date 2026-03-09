@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -19,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.model.Movie
 
 @Composable
@@ -47,46 +50,56 @@ fun MovieScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text("Films")
 
-        Button(
-            onClick = onBackToUniverses,
+        // TOP BAR
+        AppTopBar(title = "Movies")
+
+        // CONTENU
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Text("Retour aux univers")
-        }
 
-        Button(
-            onClick = onProfileClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        ) {
-            Text("Voir mon profil")
-        }
+            Button(
+                onClick = onBackToUniverses,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Retour aux univers")
+            }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            items(movies) { movie ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onMovieClick(movie) },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = movie.title)
-                        Text(text = "Sortie : ${movie.releaseDate}")
-                        if (movie.category.isNotBlank()) {
-                            Text(text = "Catégorie : ${movie.category}")
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = onProfileClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Voir mon profil")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(movies) { movie ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onMovieClick(movie) },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+
+                            Text(text = movie.title)
+
+                            Text(text = "Sortie : ${movie.releaseDate}")
+
+                            if (movie.category.isNotBlank()) {
+                                Text(text = "Catégorie : ${movie.category}")
+                            }
                         }
                     }
                 }

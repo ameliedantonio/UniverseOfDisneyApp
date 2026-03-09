@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -19,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.model.MovieStatus
 
 @Composable
@@ -55,63 +58,61 @@ fun ProfileScreen(
     val ownedMovies = movieStatuses.filter { it.status == "owned" }
     val wantToGetRidMovies = movieStatuses.filter { it.status == "want_to_get_rid" }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        item {
-            Text("Profil")
-        }
 
-        item {
-            Button(
-                onClick = onBackClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Retour aux univers")
+        // TOP BAR
+        AppTopBar(title = "Profile")
+
+        // CONTENU
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+
+            item {
+                Button(
+                    onClick = onBackClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Retour aux univers")
+                }
             }
-        }
 
-        item {
-            Button(
-                onClick = {
-                    auth.signOut()
-                    onLogoutClick()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Se déconnecter")
+            item {
+                Button(
+                    onClick = {
+                        auth.signOut()
+                        onLogoutClick()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Se déconnecter")
+                }
             }
-        }
 
-        item {
-            Text("Watched")
-        }
-        items(watchedMovies) { movie ->
-            MovieStatusCard(movie.title, movie.releaseDate)
-        }
+            item { Text("Watched") }
+            items(watchedMovies) { movie ->
+                MovieStatusCard(movie.title, movie.releaseDate)
+            }
 
-        item {
-            Text("Want to watch")
-        }
-        items(wantToWatchMovies) { movie ->
-            MovieStatusCard(movie.title, movie.releaseDate)
-        }
+            item { Text("Want to watch") }
+            items(wantToWatchMovies) { movie ->
+                MovieStatusCard(movie.title, movie.releaseDate)
+            }
 
-        item {
-            Text("Owned")
-        }
-        items(ownedMovies) { movie ->
-            MovieStatusCard(movie.title, movie.releaseDate)
-        }
+            item { Text("Owned") }
+            items(ownedMovies) { movie ->
+                MovieStatusCard(movie.title, movie.releaseDate)
+            }
 
-        item {
-            Text("Want to get rid of")
-        }
-        items(wantToGetRidMovies) { movie ->
-            MovieStatusCard(movie.title, movie.releaseDate)
+            item { Text("Want to get rid of") }
+            items(wantToGetRidMovies) { movie ->
+                MovieStatusCard(movie.title, movie.releaseDate)
+            }
         }
     }
 }
