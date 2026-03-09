@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "932130338943",
+    "project_id": "universeofdisneyapp",
+    "storage_bucket": "universeofdisneyapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932130338943:android:1c75bf65d41203572c274a",
+        "android_client_info": {
+          "package_name": "fr.isen.amelie.universeofdisneyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq0iROUG705abKDFdCpfzyRw3VH7CmNlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
