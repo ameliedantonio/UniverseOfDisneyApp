@@ -1,47 +1,33 @@
 package fr.isen.amelie.universeofdisneyapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            UniverseOfDisneyAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+
+        val db = FirebaseFirestore.getInstance()
+
+        val data = hashMapOf(
+            "name" to "test",
+            "type" to "test"
+        )
+
+        db.collection("characters")
+            .add(data)
+            .addOnSuccessListener { documentReference ->
+                Log.e("FIREBASE_TEST", "Document ajouté : ${documentReference.id}")
             }
+            .addOnFailureListener { e ->
+                Log.e("FIREBASE_TEST", "Erreur Firestore : ${e.message}", e)
+            }
+
+        setContent {
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    UniverseOfDisneyAppTheme {
-        Greeting("Android")
     }
 }
