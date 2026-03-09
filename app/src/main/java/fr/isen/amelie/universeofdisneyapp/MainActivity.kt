@@ -3,17 +3,33 @@ package fr.isen.amelie.universeofdisneyapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import fr.isen.amelie.universeofdisneyapp.model.Movie
-import fr.isen.amelie.universeofdisneyapp.model.Universe
+import fr.isen.amelie.universeofdisneyapp.screen.HomeScreen
 import fr.isen.amelie.universeofdisneyapp.screen.LoginScreen
 import fr.isen.amelie.universeofdisneyapp.screen.MovieDetailScreen
 import fr.isen.amelie.universeofdisneyapp.screen.MovieScreen
 import fr.isen.amelie.universeofdisneyapp.screen.ProfileScreen
 import fr.isen.amelie.universeofdisneyapp.screen.RegisterScreen
+import fr.isen.amelie.universeofdisneyapp.screen.SearchScreen
 import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
 
@@ -23,70 +39,179 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             UniverseOfDisneyAppTheme {
+                AppNavigation()
+            }
+        }
+    }
+}
 
-                var screen by remember { mutableStateOf("login") }
-                var selectedUniverse by remember { mutableStateOf(Universe()) }
-                var selectedMovie by remember { mutableStateOf(Movie()) }
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+    var selectedMovie by remember { mutableStateOf(Movie()) }
 
-                when (screen) {
-                    "login" -> LoginScreen(
-                        onLoginSuccess = {
-                            screen = "home"
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry.value?.destination?.route
+
+    val showBottomBar = currentRoute != "login" && currentRoute != "register"
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = currentRoute == "home",
+                        onClick = {
+                            navController.navigate("home") {
+                                launchSingleTop = true
+                            }
                         },
-                        onGoToRegister = {
-                            screen = "register"
+                        label = { Text("Home") },
+                        icon = {
+                            Icon(Icons.Default.Home, contentDescription = "Home")
                         }
                     )
 
-                    "register" -> RegisterScreen(
-                        onRegisterSuccess = {
-                            screen = "login"
+                    NavigationBarItem(
+                        selected = currentRoute == "universes" || currentRoute?.startsWith("movies/") == true,
+                        onClick = {
+                            navController.navigate("universes") {
+                                launchSingleTop = true
+                            }
                         },
-                        onGoToLogin = {
-                            screen = "login"
+                        label = { Text("Universes") },
+                        icon = {
+                            Icon(Icons.Default.Menu, contentDescription = "Universes")
                         }
                     )
 
-                    "home" -> UniverseScreen(
-                        onUniverseClick = { universe ->
-                            selectedUniverse = universe
-                            screen = "movies"
+                    NavigationBarItem(
+                        selected = currentRoute == "search",
+                        onClick = {
+                            navController.navigate("search") {
+                                launchSingleTop = true
+                            }
                         },
-                        onProfileClick = {
-                            screen = "profile"
+                        label = { Text("Search") },
+                        icon = {
+                            Icon(Icons.Default.Search, contentDescription = "Search")
                         }
                     )
 
-                    "profile" -> ProfileScreen(
-                        onBackClick = {
-                            screen = "home"
+                    NavigationBarItem(
+                        selected = currentRoute == "profile",
+                        onClick = {
+                            navController.navigate("profile") {
+                                launchSingleTop = true
+                            }
                         },
-                        onLogoutClick = {
-                            screen = "login"
-                        }
-                    )
-
-                    "movies" -> MovieScreen(
-                        universeId = selectedUniverse.id,
-                        onMovieClick = { movie ->
-                            selectedMovie = movie
-                            screen = "movieDetail"
-                        },
-                        onBackToUniverses = {
-                            screen = "home"
-                        },
-                        onProfileClick = {
-                            screen = "profile"
-                        }
-                    )
-
-                    "movieDetail" -> MovieDetailScreen(
-                        movie = selectedMovie,
-                        onBackClick = {
-                            screen = "movies"
+                        label = { Text("Profile") },
+                        icon = {
+                            Icon(Icons.Default.Person, contentDescription = "Profile")
                         }
                     )
                 }
+            }
+        }
+    ) { innerPadding ->
+
+        NavHost(
+            navController = navController,
+            startDestination = "login",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+
+            composable("login") {
+                LoginScreen(
+                    onLoginSuccess = {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    },
+                    onGoToRegister = {
+                        navController.navigate("register")
+                    }
+                )
+            }
+
+            composable("register") {
+                RegisterScreen(
+                    onRegisterSuccess = {
+                        navController.navigate("login")
+                    },
+                    onGoToLogin = {
+                        navController.navigate("login")
+                    }
+                )
+            }
+
+            composable("home") {
+                HomeScreen(
+                    onMovieClick = { movie ->
+                        selectedMovie = movie
+                        navController.navigate("movieDetail")
+                    }
+                )
+            }
+
+            composable("universes") {
+                UniverseScreen(
+                    onUniverseClick = { universe ->
+                        navController.navigate("movies/${universe.id}")
+                    }
+                )
+            }
+
+            composable(
+                route = "movies/{universeId}",
+                arguments = listOf(navArgument("universeId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val universeId = backStackEntry.arguments?.getString("universeId") ?: ""
+
+                MovieScreen(
+                    universeId = universeId,
+                    onMovieClick = { movie ->
+                        selectedMovie = movie
+                        navController.navigate("movieDetail")
+                    },
+                    onBackToUniverses = {
+                        navController.navigate("universes")
+                    },
+                    onProfileClick = {
+                        navController.navigate("profile")
+                    }
+                )
+            }
+
+            composable("search") {
+                SearchScreen(
+                    onMovieClick = { movie ->
+                        selectedMovie = movie
+                        navController.navigate("movieDetail")
+                    }
+                )
+            }
+
+            composable("profile") {
+                ProfileScreen(
+                    onBackClick = {
+                        navController.navigate("universes")
+                    },
+                    onLogoutClick = {
+                        navController.navigate("login") {
+                            popUpTo(0)
+                        }
+                    }
+                )
+            }
+
+            composable("movieDetail") {
+                MovieDetailScreen(
+                    movie = selectedMovie,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

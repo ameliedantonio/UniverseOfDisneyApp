@@ -23,8 +23,7 @@ import fr.isen.amelie.universeofdisneyapp.model.Universe
 
 @Composable
 fun UniverseScreen(
-    onUniverseClick: (Universe) -> Unit,
-    onProfileClick: () -> Unit
+    onUniverseClick: (Universe) -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
     val universes = remember { mutableStateListOf<Universe>() }
@@ -49,15 +48,6 @@ fun UniverseScreen(
             .padding(16.dp)
     ) {
         Text("Univers Disney")
-
-        Button(
-            onClick = onProfileClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-        ) {
-            Text("Voir mon profil")
-        }
 
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp),
