@@ -59,4 +59,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
     implementation("com.google.firebase:firebase-firestore")
+
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
 }
