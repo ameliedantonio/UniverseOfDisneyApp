@@ -32,6 +32,9 @@ import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+
 @Composable
 fun HomeScreen(
     onMovieClick: (Movie) -> Unit
@@ -164,21 +167,23 @@ fun MovieCarouselItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column {
-            Box(
+            AsyncImage(
+                model = movie.imageUrl,
+                contentDescription = movie.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp))
-                    .background(Color(0xFFBFC7E8)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = movie.title,
-                    modifier = Modifier.padding(12.dp),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                    .background(Color.LightGray),
+                contentScale = ContentScale.Crop,
+                onSuccess = {
+                    println("IMAGE OK = ${movie.imageUrl}")
+                },
+                onError = {
+                    println("IMAGE ERROR = ${movie.imageUrl}")
+                    println("CAUSE = ${it.result.throwable}")
+                }
+            )
 
             Column(
                 modifier = Modifier.padding(12.dp)
