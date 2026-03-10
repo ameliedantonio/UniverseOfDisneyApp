@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,15 +30,15 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
-
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.style.TextAlign
-
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.colorResource
+import fr.isen.amelie.universeofdisneyapp.R
 
 @Composable
 fun HomeScreen(
@@ -53,6 +52,7 @@ fun HomeScreen(
     var randomMovie by remember { mutableStateOf<Movie?>(null) }
     var movieList by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var firstName by remember { mutableStateOf("") }
+    var top10Movies by remember { mutableStateOf<List<Movie>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         if (userId != null) {
@@ -78,10 +78,28 @@ fun HomeScreen(
                     }
                 }
                 movieList = movies
-
                 if (movies.isNotEmpty()) {
                     randomMovie = movies.random()
                 }
+                db.getReference("top10")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(topSnapshot: DataSnapshot) {
+                            val topMovies = mutableListOf<Movie>()
+
+                            for (itemSnapshot in topSnapshot.children) {
+                                val movieId = itemSnapshot.child("movieId").getValue(String::class.java)
+
+                                val movie = movies.find { it.id == movieId }
+                                if (movie != null) {
+                                    topMovies.add(movie)
+                                }
+                            }
+                            top10Movies = topMovies
+                        }
+                        override fun onCancelled(error: DatabaseError) {
+                            println("Top10 error : ${error.message}")
+                        }
+                    })
             }
             override fun onCancelled(error: DatabaseError) {
                 println("Realtime Database error : ${error.message}")
@@ -154,16 +172,33 @@ fun HomeScreen(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Top 10 Movies Today",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(top10Movies.size) { index ->
+                    Top10MovieItem(
+                        rank = index + 1,
+                        movie = top10Movies[index],
+                        onClick = { onMovieClick(top10Movies[index]) }
+                    )
+                }
+            }
 
             Text(
                 text = "Recommended for You",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
+            Spacer(modifier = Modifier.height(10.dp))
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -219,14 +254,11 @@ fun MovieCarouselItem(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
-
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = "Exit : ${movie.releaseDate}",
                     style = MaterialTheme.typography.bodySmall
                 )
-
                 if (movie.category.isNotBlank()) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
@@ -237,6 +269,47 @@ fun MovieCarouselItem(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun Top10MovieItem(
+    rank: Int,
+    movie: Movie,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .width(170.dp)
+            .height(220.dp)
+            .clickable { onClick() }
+    ) {
+
+        Text(
+            text = rank.toString(),
+            fontSize = 90.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = colorResource(id = R.color.blue_dark),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+        )
+
+        Card(
+            modifier = Modifier
+                .width(130.dp)
+                .align(Alignment.CenterEnd),
+            shape = RoundedCornerShape(18.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        ) {
+            AsyncImage(
+                model = movie.imageUrl,
+                contentDescription = movie.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
+            )
         }
     }
 }
