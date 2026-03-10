@@ -36,13 +36,11 @@ fun EditProfileScreen(
 ) {
     val user = FirebaseAuth.getInstance().currentUser
     val email = user?.email ?: "No email"
-
     var name by remember {
         mutableStateOf(
             user?.displayName ?: email.substringBefore("@").ifBlank { "User" }
         )
     }
-
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
@@ -50,7 +48,6 @@ fun EditProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF7F7F9))
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(16.dp),
@@ -62,9 +59,7 @@ fun EditProfileScreen(
             fontWeight = FontWeight.Bold,
             color = Color(0xFF111111)
         )
-
         Spacer(modifier = Modifier.height(20.dp))
-
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -79,7 +74,6 @@ fun EditProfileScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
@@ -89,7 +83,6 @@ fun EditProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
@@ -100,7 +93,6 @@ fun EditProfileScreen(
                     enabled = false,
                     singleLine = true
                 )
-
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
@@ -108,7 +100,6 @@ fun EditProfileScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
@@ -119,7 +110,6 @@ fun EditProfileScreen(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation()
                 )
-
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
@@ -144,7 +134,6 @@ fun EditProfileScreen(
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
@@ -155,19 +144,16 @@ fun EditProfileScreen(
                     message = "Name cannot be empty"
                     return@Button
                 }
-
                 if (newPassword.isNotEmpty() || confirmPassword.isNotEmpty()) {
                     if (newPassword.length < 6) {
                         message = "Password must contain at least 6 characters"
                         return@Button
                     }
-
                     if (newPassword != confirmPassword) {
                         message = "Passwords do not match"
                         return@Button
                     }
                 }
-
                 val profileUpdates = UserProfileChangeRequest.Builder()
                     .setDisplayName(name)
                     .build()
@@ -178,7 +164,6 @@ fun EditProfileScreen(
                             message = "Error while updating profile name"
                             return@addOnCompleteListener
                         }
-
                         if (newPassword.isNotEmpty()) {
                             user.updatePassword(newPassword)
                                 .addOnCompleteListener { passwordTask ->
@@ -199,7 +184,6 @@ fun EditProfileScreen(
         ) {
             Text("Save")
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
