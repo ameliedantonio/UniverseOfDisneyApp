@@ -3,6 +3,7 @@ package fr.isen.amelie.universeofdisneyapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,6 +25,23 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import fr.isen.amelie.universeofdisneyapp.screen.MyMoviesScreen
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
 import fr.isen.amelie.universeofdisneyapp.screen.HomeScreen
 import fr.isen.amelie.universeofdisneyapp.screen.LoginScreen
@@ -36,7 +54,6 @@ import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -68,7 +85,8 @@ fun AppNavigation() {
                         },
                         label = { Text("Home") },
                         icon = {
-                            Icon(Icons.Default.Home, contentDescription = "Home")
+                            Icon(Icons.Default.Home,
+                                contentDescription = "Home")
                         }
                     )
                     NavigationBarItem(
@@ -80,7 +98,34 @@ fun AppNavigation() {
                         },
                         label = { Text("Universes") },
                         icon = {
-                            Icon(Icons.Default.Menu, contentDescription = "Universes")
+                            Icon(Icons.Default.Menu,
+                                contentDescription = "Universes")
+                        }
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == "mymovies",
+                        onClick = {
+                            navController.navigate("mymovies") {
+                                launchSingleTop = true
+                            }
+                        },
+                        label = { Text("My movies") },
+                        icon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Movie,
+                                    contentDescription = "My movies",
+                                    tint = Color.White
+                                )
+                            }
                         }
                     )
                     NavigationBarItem(
@@ -179,6 +224,9 @@ fun AppNavigation() {
                         navController.navigate("movieDetail")
                     }
                 )
+            }
+            composable("mymovies") {
+                MyMoviesScreen()
             }
             composable("profile") {
                 ProfileScreen(
