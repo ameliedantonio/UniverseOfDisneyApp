@@ -35,6 +35,10 @@ import fr.isen.amelie.universeofdisneyapp.activity.Movie
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.text.style.TextAlign
+
 @Composable
 fun HomeScreen(
     onMovieClick: (Movie) -> Unit
@@ -56,39 +60,29 @@ fun HomeScreen(
                         movies.add(movie.copy(id = movieSnapshot.key ?: ""))
                     }
                 }
-
                 movieList = movies
 
                 if (movies.isNotEmpty()) {
                     randomMovie = movies.random()
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 println("Erreur Realtime Database : ${error.message}")
             }
         })
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        AppTopBar(title = "Home")
+        AppTopBar(title = "Bonjour")
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Film aléatoire",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             randomMovie?.let { movie ->
                 Card(
                     modifier = Modifier
@@ -97,30 +91,44 @@ fun HomeScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                     shape = RoundedCornerShape(18.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = movie.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                    Column {
+                        AsyncImage(
+                            model = movie.imageUrl,
+                            contentDescription = movie.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp)
+                                .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp))
+                                .background(Color.LightGray),
+                            contentScale = ContentScale.Crop,
+                            onSuccess = {
+                                println("RANDOM IMAGE OK = ${movie.imageUrl}")
+                            },
+                            onError = {
+                                println("RANDOM IMAGE ERROR = ${movie.imageUrl}")
+                                println("CAUSE = ${it.result.throwable}")
+                            }
                         )
 
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text("Sortie : ${movie.releaseDate}")
-
-                        if (movie.category.isNotBlank()) {
-                            Text("Catégorie : ${movie.category}")
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Button(
-                            onClick = { onMovieClick(movie) },
-                            modifier = Modifier.fillMaxWidth()
+                        Column(
+                            modifier = Modifier.padding(16.dp)
                         ) {
-                            Text("Voir le détail")
+                            Text(
+                                text = movie.title,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Button(
+                                onClick = { onMovieClick(movie) },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Voir le détail")
+                            }
                         }
                     }
                 }
@@ -132,7 +140,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Comme sur Netflix mouhahah",
+                text = "Recommended for You",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
