@@ -38,7 +38,6 @@ fun HomeScreen(
 ) {
     val db = FirebaseDatabase.getInstance()
     val moviesRef = db.getReference("movies")
-
     var randomMovie by remember { mutableStateOf<Movie?>(null) }
     var movieList by remember { mutableStateOf<List<Movie>>(emptyList()) }
 
@@ -46,23 +45,19 @@ fun HomeScreen(
         moviesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val movies = mutableListOf<Movie>()
-
                 for (movieSnapshot in snapshot.children) {
                     val movie = movieSnapshot.getValue(Movie::class.java)
                     if (movie != null) {
                         movies.add(movie.copy(id = movieSnapshot.key ?: ""))
                     }
                 }
-
                 movieList = movies
-
                 if (movies.isNotEmpty()) {
                     randomMovie = movies.random()
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
-                println("Erreur Realtime Database : ${error.message}")
+                println("Error Realtime Database : ${error.message}")
             }
         })
     }
@@ -71,7 +66,6 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         AppTopBar(title = "Home")
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -79,13 +73,11 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Film aléatoire",
+                text = "Random movie",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
             Spacer(modifier = Modifier.height(12.dp))
-
             randomMovie?.let { movie ->
                 Card(
                     modifier = Modifier
@@ -102,38 +94,33 @@ fun HomeScreen(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
-
                         Spacer(modifier = Modifier.height(4.dp))
-
-                        Text("Sortie : ${movie.releaseDate}")
+                        Text("Exit : ${movie.releaseDate}")
 
                         if (movie.category.isNotBlank()) {
-                            Text("Catégorie : ${movie.category}")
+                            Text("Category : ${movie.category}")
                         }
-
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Button(
                             onClick = { onMovieClick(movie) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Voir le détail")
+                            Text("See details")
                         }
                     }
                 }
             } ?: Text(
-                text = "Aucun film trouvé",
+                text = "No movies found",
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Comme sur Netflix mouhahah",
+                text = "Our selection for you",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyRow(
@@ -179,7 +166,6 @@ fun MovieCarouselItem(
                     fontWeight = FontWeight.Bold
                 )
             }
-
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
@@ -189,14 +175,11 @@ fun MovieCarouselItem(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
-
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
-                    text = "Sortie : ${movie.releaseDate}",
+                    text = "Exit : ${movie.releaseDate}",
                     style = MaterialTheme.typography.bodySmall
                 )
-
                 if (movie.category.isNotBlank()) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(

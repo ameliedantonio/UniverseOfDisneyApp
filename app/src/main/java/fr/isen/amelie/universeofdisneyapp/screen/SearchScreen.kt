@@ -17,7 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
@@ -25,49 +28,44 @@ import fr.isen.amelie.universeofdisneyapp.activity.Movie
 fun SearchScreen(
     onMovieClick: (Movie) -> Unit
 ) {
-    val db = FirebaseFirestore.getInstance()
+    val database = FirebaseDatabase.getInstance().reference
     val allMovies = remember { mutableStateListOf<Movie>() }
     var searchText by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        db.collection("movies")
-            .get()
-            .addOnSuccessListener { result ->
-                allMovies.clear()
-                for (document in result.documents) {
-                    val movie = document.toObject(Movie::class.java)
-                    if (movie != null) {
-                        allMovies.add(movie.copy(id = document.id))
+        database.child("movies")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    allMovies.clear()
+                    for (child in snapshot.children) {
+                        val movie = child.getValue(Movie::class.java)
+                        if (movie != null) {
+                            allMovies.add(movie)
+                        }
                     }
                 }
-            }
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
     }
-
     val filteredMovies = allMovies.filter {
         it.title.contains(searchText, ignoreCase = true)
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
-        // TOP BAR
         AppTopBar(title = "Search")
-
-        // CONTENU
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                label = { Text("Rechercher un film") },
+                label = { Text("Search for a movie") },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
@@ -82,7 +80,7 @@ fun SearchScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(movie.title)
-                            Text("Sortie : ${movie.releaseDate}")
+                            Text("Exit : ${movie.releaseDate}")
                         }
                     }
                 }

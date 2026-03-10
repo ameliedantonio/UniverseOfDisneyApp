@@ -32,7 +32,6 @@ fun RegisterScreen(
     val auth = FirebaseAuth.getInstance()
     val database = FirebaseDatabase.getInstance().reference
     val context = LocalContext.current
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -42,8 +41,7 @@ fun RegisterScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Créer un compte")
-
+        Text("Create an account")
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -52,17 +50,15 @@ fun RegisterScreen(
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Mot de passe") },
+            label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
@@ -78,14 +74,13 @@ fun RegisterScreen(
                                         "uid" to user.uid,
                                         "email" to email
                                     )
-
                                     database.child("users")
                                         .child(user.uid)
                                         .setValue(userData)
                                         .addOnSuccessListener {
                                             Toast.makeText(
                                                 context,
-                                                "Compte créé",
+                                                "Account created",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                             onRegisterSuccess()
@@ -93,7 +88,7 @@ fun RegisterScreen(
                                         .addOnFailureListener { e ->
                                             Toast.makeText(
                                                 context,
-                                                "Erreur Realtime DB : ${e.message}",
+                                                "Realtime DB error : ${e.message}",
                                                 Toast.LENGTH_LONG
                                             ).show()
                                         }
@@ -101,7 +96,7 @@ fun RegisterScreen(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Erreur : ${task.exception?.message}",
+                                    "Error : ${task.exception?.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -109,23 +104,22 @@ fun RegisterScreen(
                 } else {
                     Toast.makeText(
                         context,
-                        "Remplis tous les champs",
+                        "Fill in all the fields",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("S'inscrire")
+            Text("Register")
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(
             onClick = onGoToLogin,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Déjà un compte ? Se connecter")
+            Text("Already have an account? Log in")
         }
     }
 }

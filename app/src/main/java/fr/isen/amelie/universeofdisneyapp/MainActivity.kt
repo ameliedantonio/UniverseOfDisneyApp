@@ -51,10 +51,8 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation() {
     val navController = rememberNavController()
     var selectedMovie by remember { mutableStateOf(Movie()) }
-
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
-
     val showBottomBar = currentRoute != "login" && currentRoute != "register"
 
     Scaffold(
@@ -73,7 +71,6 @@ fun AppNavigation() {
                             Icon(Icons.Default.Home, contentDescription = "Home")
                         }
                     )
-
                     NavigationBarItem(
                         selected = currentRoute == "universes" || currentRoute?.startsWith("movies/") == true,
                         onClick = {
@@ -86,7 +83,6 @@ fun AppNavigation() {
                             Icon(Icons.Default.Menu, contentDescription = "Universes")
                         }
                     )
-
                     NavigationBarItem(
                         selected = currentRoute == "search",
                         onClick = {
@@ -99,7 +95,6 @@ fun AppNavigation() {
                             Icon(Icons.Default.Search, contentDescription = "Search")
                         }
                     )
-
                     NavigationBarItem(
                         selected = currentRoute == "profile",
                         onClick = {
@@ -116,13 +111,11 @@ fun AppNavigation() {
             }
         }
     ) { innerPadding ->
-
         NavHost(
             navController = navController,
             startDestination = "login",
             modifier = Modifier.padding(innerPadding)
         ) {
-
             composable("login") {
                 LoginScreen(
                     onLoginSuccess = {
@@ -135,7 +128,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("register") {
                 RegisterScreen(
                     onRegisterSuccess = {
@@ -146,7 +138,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("home") {
                 HomeScreen(
                     onMovieClick = { movie ->
@@ -155,7 +146,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("universes") {
                 UniverseScreen(
                     onUniverseClick = { universe ->
@@ -163,13 +153,11 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable(
                 route = "movies/{universeId}",
                 arguments = listOf(navArgument("universeId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val universeId = backStackEntry.arguments?.getString("universeId") ?: ""
-
                 MovieScreen(
                     universeId = universeId,
                     onMovieClick = { movie ->
@@ -184,7 +172,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("search") {
                 SearchScreen(
                     onMovieClick = { movie ->
@@ -193,7 +180,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("profile") {
                 ProfileScreen(
                     onBackClick = {
@@ -206,7 +192,6 @@ fun AppNavigation() {
                     }
                 )
             }
-
             composable("movieDetail") {
                 MovieDetailScreen(
                     movie = selectedMovie,

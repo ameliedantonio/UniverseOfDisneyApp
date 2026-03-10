@@ -25,7 +25,6 @@ import fr.isen.amelie.universeofdisneyapp.activity.Universe
 fun UniverseScreen(
     onUniverseClick: (Universe) -> Unit
 ) {
-
     val database = FirebaseDatabase.getInstance().reference
     val universes = remember { mutableStateListOf<Universe>() }
 
@@ -45,7 +44,6 @@ fun UniverseScreen(
                 }
             })
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
