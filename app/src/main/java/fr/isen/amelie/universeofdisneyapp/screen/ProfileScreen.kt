@@ -46,7 +46,8 @@ import androidx.compose.material3.IconButton
 
 @Composable
 fun ProfileScreen(
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onEditProfileClick: () -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
     val database = FirebaseDatabase.getInstance().reference
@@ -102,7 +103,8 @@ fun ProfileScreen(
     ) {
         ProfileHeaderCard(
             displayName = displayName,
-            email = email
+            email = email,
+            onEditProfileClick = onEditProfileClick
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -141,7 +143,8 @@ fun ProfileHeaderCard(
     displayName: String,
     email: String,
     onEditProfileClick: () -> Unit = {}
-) {
+)
+{
     val gradient = Brush.linearGradient(
         colors = listOf(
             Color(0xFFFF5F6D),

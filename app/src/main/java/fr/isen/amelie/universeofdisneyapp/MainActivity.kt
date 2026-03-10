@@ -52,6 +52,7 @@ import fr.isen.amelie.universeofdisneyapp.screen.RegisterScreen
 import fr.isen.amelie.universeofdisneyapp.screen.SearchScreen
 import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
+import fr.isen.amelie.universeofdisneyapp.screen.EditProfileScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -234,6 +235,16 @@ fun AppNavigation() {
                         navController.navigate("login") {
                             popUpTo(0)
                         }
+                    },
+                    onEditProfileClick = {
+                        navController.navigate("edit_profile")
+                    }
+                )
+            }
+            composable("edit_profile") {
+                EditProfileScreen(
+                    onBackClick = {
+                        navController.popBackStack()
                     }
                 )
             }
