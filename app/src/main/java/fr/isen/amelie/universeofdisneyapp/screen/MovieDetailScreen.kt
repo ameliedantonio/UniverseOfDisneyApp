@@ -19,10 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
-import fr.isen.amelie.universeofdisneyapp.activity.Movie
 import fr.isen.amelie.universeofdisneyapp.activity.MovieOwnerInfo
+import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
 @Composable
 fun MovieDetailScreen(
@@ -31,35 +31,38 @@ fun MovieDetailScreen(
 ) {
     val context = LocalContext.current
     val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
-
+    val database = FirebaseDatabase.getInstance().reference
     val sharedUsers = remember { mutableStateListOf<MovieOwnerInfo>() }
 
     fun loadSharedGetRidUsers() {
-        db.collection("shared_get_rid")
-            .document(movie.id)
-            .collection("users")
-            .get()
-            .addOnSuccessListener { result ->
-                sharedUsers.clear()
-                for (document in result.documents) {
-                    val userEmail = document.getString("userEmail") ?: ""
-                    val status = document.getString("status") ?: ""
-                    sharedUsers.add(
-                        MovieOwnerInfo(
-                            userEmail = userEmail,
-                            status = status
+        database.child("shared_get_rid")
+            .child(movie.id)
+            .child("users")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    sharedUsers.clear()
+
+                    for (child in snapshot.children) {
+                        val userEmail = child.child("userEmail").getValue(String::class.java) ?: ""
+                        val status = child.child("status").getValue(String::class.java) ?: ""
+
+                        sharedUsers.add(
+                            MovieOwnerInfo(
+                                userEmail = userEmail,
+                                status = status
+                            )
                         )
-                    )
+                    }
                 }
-            }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 
     fun saveMovieStatus(status: String) {
         val user = auth.currentUser
 
         if (user != null) {
-            val statusData = hashMapOf(
+            val statusData = mapOf(
                 "movieId" to movie.id,
                 "title" to movie.title,
                 "universeId" to movie.universeId,
@@ -68,28 +71,26 @@ fun MovieDetailScreen(
                 "status" to status,
                 "userEmail" to (user.email ?: "")
             )
-
-            db.collection("users")
-                .document(user.uid)
-                .collection("movieStatuses")
-                .document(movie.id)
-                .set(statusData)
+            database.child("users")
+                .child(user.uid)
+                .child("movieStatuses")
+                .child(movie.id)
+                .setValue(statusData)
                 .addOnSuccessListener {
                     if (status == "want_to_get_rid") {
-                        val sharedData = hashMapOf(
+                        val sharedData = mapOf(
                             "userEmail" to (user.email ?: ""),
                             "status" to status
                         )
-
-                        db.collection("shared_get_rid")
-                            .document(movie.id)
-                            .collection("users")
-                            .document(user.uid)
-                            .set(sharedData)
+                        database.child("shared_get_rid")
+                            .child(movie.id)
+                            .child("users")
+                            .child(user.uid)
+                            .setValue(sharedData)
                             .addOnSuccessListener {
                                 Toast.makeText(
                                     context,
-                                    "Statut enregistré : $status",
+                                    "Saved status : $status",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 loadSharedGetRidUsers()
@@ -97,20 +98,20 @@ fun MovieDetailScreen(
                             .addOnFailureListener { e ->
                                 Toast.makeText(
                                     context,
-                                    "Erreur partage : ${e.message}",
+                                    "Sharing error : ${e.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
                     } else {
-                        db.collection("shared_get_rid")
-                            .document(movie.id)
-                            .collection("users")
-                            .document(user.uid)
-                            .delete()
+                        database.child("shared_get_rid")
+                            .child(movie.id)
+                            .child("users")
+                            .child(user.uid)
+                            .removeValue()
                             .addOnSuccessListener {
                                 Toast.makeText(
                                     context,
-                                    "Statut enregistré : $status",
+                                    "Saved status : $status",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 loadSharedGetRidUsers()
@@ -118,7 +119,7 @@ fun MovieDetailScreen(
                             .addOnFailureListener { e ->
                                 Toast.makeText(
                                     context,
-                                    "Erreur suppression partage : ${e.message}",
+                                    "Share deletion error : ${e.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -127,38 +128,34 @@ fun MovieDetailScreen(
                 .addOnFailureListener { e ->
                     Toast.makeText(
                         context,
-                        "Erreur : ${e.message}",
+                        "Error : ${e.message}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
         } else {
             Toast.makeText(
                 context,
-                "Aucun utilisateur connecté",
+                "No users logged in",
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
-
     LaunchedEffect(movie.id) {
         loadSharedGetRidUsers()
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
         AppTopBar(title = movie.title)
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "Date de sortie : ${movie.releaseDate}")
-            Text(text = "Univers : ${movie.universeId}")
-            Text(text = "Catégorie : ${movie.category}")
+            Text(text = "Release date : ${movie.releaseDate}")
+            Text(text = "Universe : ${movie.universeId}")
+            Text(text = "Category : ${movie.category}")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -168,7 +165,6 @@ fun MovieDetailScreen(
             ) {
                 Text("Watched")
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
@@ -177,7 +173,6 @@ fun MovieDetailScreen(
             ) {
                 Text("Want to watch")
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
@@ -186,7 +181,6 @@ fun MovieDetailScreen(
             ) {
                 Text("Own on DVD / Blu-ray")
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
@@ -195,11 +189,8 @@ fun MovieDetailScreen(
             ) {
                 Text("Want to get rid of")
             }
-
             Spacer(modifier = Modifier.height(24.dp))
-
-            Text("Utilisateurs qui veulent se débarrasser de ce film")
-
+            Text("Users who want to get rid of this movie")
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn(
@@ -213,19 +204,18 @@ fun MovieDetailScreen(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(text = userInfo.userEmail)
-                            Text(text = "Veut s'en débarrasser")
+                            Text(text = "Wants to get rid of it")
                         }
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = onBackClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Retour")
+                Text("Back")
             }
         }
     }

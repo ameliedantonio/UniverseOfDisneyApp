@@ -11,14 +11,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.MovieStatus
 
@@ -28,26 +25,39 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+    val database = FirebaseDatabase.getInstance().reference
     val movieStatuses = remember { mutableStateListOf<MovieStatus>() }
 
     LaunchedEffect(Unit) {
         val user = auth.currentUser
-
         if (user != null) {
-            db.collection("users")
-                .document(user.uid)
-                .collection("movieStatuses")
-                .get()
-                .addOnSuccessListener { result ->
-                    movieStatuses.clear()
-                    for (document in result.documents) {
-                        val status = document.toObject(MovieStatus::class.java)
-                        if (status != null) {
-                            movieStatuses.add(status)
+            database
+                .child("users")
+                .child(user.uid)
+                .child("movieStatuses")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        movieStatuses.clear()
+
+                        for (child in snapshot.children) {
+                            val movieId = child.child("movieId").getValue(String::class.java) ?: ""
+                            val title = child.child("title").getValue(String::class.java) ?: ""
+                            val releaseDate = child.child("releaseDate").getValue(String::class.java) ?: ""
+                            val status = child.child("status").getValue(String::class.java) ?: ""
+
+                            movieStatuses.add(
+                                MovieStatus(
+                                    movieId = movieId,
+                                    title = title,
+                                    releaseDate = releaseDate,
+                                    status = status
+                                )
+                            )
                         }
                     }
-                }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
         }
     }
 
@@ -59,27 +69,21 @@ fun ProfileScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
-        // TOP BAR
         AppTopBar(title = "Profile")
-
-        // CONTENU
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
             item {
                 Button(
                     onClick = onBackClick,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Retour aux univers")
+                    Text("Return to the universes")
                 }
             }
-
             item {
                 Button(
                     onClick = {
@@ -88,25 +92,21 @@ fun ProfileScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Se déconnecter")
+                    Text("Log out")
                 }
             }
-
             item { Text("Watched") }
             items(watchedMovies) { movie ->
                 MovieStatusCard(movie.title, movie.releaseDate)
             }
-
             item { Text("Want to watch") }
             items(wantToWatchMovies) { movie ->
                 MovieStatusCard(movie.title, movie.releaseDate)
             }
-
             item { Text("Owned") }
             items(ownedMovies) { movie ->
                 MovieStatusCard(movie.title, movie.releaseDate)
             }
-
             item { Text("Want to get rid of") }
             items(wantToGetRidMovies) { movie ->
                 MovieStatusCard(movie.title, movie.releaseDate)
@@ -121,9 +121,11 @@ fun MovieStatusCard(title: String, releaseDate: String) {
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
             Text(text = title)
-            Text(text = "Sortie : $releaseDate")
+            Text(text = "Exit : $releaseDate")
         }
     }
 }

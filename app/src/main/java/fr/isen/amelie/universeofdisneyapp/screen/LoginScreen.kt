@@ -30,7 +30,6 @@ fun LoginScreen(
 ) {
     val auth = FirebaseAuth.getInstance()
     val context = LocalContext.current
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -40,27 +39,23 @@ fun LoginScreen(
             .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Connexion")
-
+        Text("Connection")
         Spacer(modifier = Modifier.height(16.dp))
-
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Mot de passe") },
+            label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
@@ -71,14 +66,14 @@ fun LoginScreen(
                             if (task.isSuccessful) {
                                 Toast.makeText(
                                     context,
-                                    "Connexion réussie",
+                                    "Connection successful",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 onLoginSuccess()
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Erreur : ${task.exception?.message}",
+                                    "Error : ${task.exception?.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -86,23 +81,22 @@ fun LoginScreen(
                 } else {
                     Toast.makeText(
                         context,
-                        "Remplis tous les champs",
+                        "Fill in all the fields",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Se connecter")
+            Text("Log in")
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(
             onClick = onGoToRegister,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Pas encore de compte ? S'inscrire")
+            Text("Don't have an account yet? Sign up")
         }
     }
 }

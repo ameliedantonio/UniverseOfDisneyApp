@@ -28,7 +28,6 @@ fun MovieScreen(
     onBackToUniverses: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-
     val database = FirebaseDatabase.getInstance().reference
     val movies = remember { mutableStateListOf<Movie>() }
 
@@ -47,7 +46,6 @@ fun MovieScreen(
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -61,20 +59,19 @@ fun MovieScreen(
                 onClick = onBackToUniverses,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Retour aux univers")
+                Text("Return to the universes")
             }
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = onProfileClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Voir mon profil")
+                Text("View my profile")
             }
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-
                 items(movies) { movie ->
                     Card(
                         modifier = Modifier
@@ -86,9 +83,9 @@ fun MovieScreen(
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Text(movie.title)
-                            Text("Sortie : ${movie.releaseDate}")
+                            Text("Exit : ${movie.releaseDate}")
                             if (movie.category.isNotBlank()) {
-                                Text("Catégorie : ${movie.category}")
+                                Text("Category : ${movie.category}")
                             }
                         }
                     }
