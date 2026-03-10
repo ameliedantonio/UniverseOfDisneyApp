@@ -32,12 +32,16 @@ import com.google.firebase.database.*
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
+
 @Composable
 fun HomeScreen(
     onMovieClick: (Movie) -> Unit
 ) {
     val db = FirebaseDatabase.getInstance()
     val moviesRef = db.getReference("movies")
+
     var randomMovie by remember { mutableStateOf<Movie?>(null) }
     var movieList by remember { mutableStateOf<List<Movie>>(emptyList()) }
 
@@ -45,19 +49,23 @@ fun HomeScreen(
         moviesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val movies = mutableListOf<Movie>()
+
                 for (movieSnapshot in snapshot.children) {
                     val movie = movieSnapshot.getValue(Movie::class.java)
                     if (movie != null) {
                         movies.add(movie.copy(id = movieSnapshot.key ?: ""))
                     }
                 }
+
                 movieList = movies
+
                 if (movies.isNotEmpty()) {
                     randomMovie = movies.random()
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
-                println("Error Realtime Database : ${error.message}")
+                println("Erreur Realtime Database : ${error.message}")
             }
         })
     }
@@ -66,6 +74,7 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         AppTopBar(title = "Home")
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,11 +82,13 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Random movie",
+                text = "Film aléatoire",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             Spacer(modifier = Modifier.height(12.dp))
+
             randomMovie?.let { movie ->
                 Card(
                     modifier = Modifier
@@ -94,33 +105,38 @@ fun HomeScreen(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
+
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("Exit : ${movie.releaseDate}")
+
+                        Text("Sortie : ${movie.releaseDate}")
 
                         if (movie.category.isNotBlank()) {
-                            Text("Category : ${movie.category}")
+                            Text("Catégorie : ${movie.category}")
                         }
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Button(
                             onClick = { onMovieClick(movie) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("See details")
+                            Text("Voir le détail")
                         }
                     }
                 }
             } ?: Text(
-                text = "No movies found",
+                text = "Aucun film trouvé",
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             Spacer(modifier = Modifier.height(28.dp))
 
             Text(
-                text = "Our selection for you",
+                text = "Comme sur Netflix mouhahah",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyRow(
@@ -151,21 +167,24 @@ fun MovieCarouselItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column {
-            Box(
+            AsyncImage(
+                model = movie.imageUrl,
+                contentDescription = movie.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp))
-                    .background(Color(0xFFBFC7E8)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = movie.title,
-                    modifier = Modifier.padding(12.dp),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                    .background(Color.LightGray),
+                contentScale = ContentScale.Crop,
+                onSuccess = {
+                    println("IMAGE OK = ${movie.imageUrl}")
+                },
+                onError = {
+                    println("IMAGE ERROR = ${movie.imageUrl}")
+                    println("CAUSE = ${it.result.throwable}")
+                }
+            )
+
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
@@ -175,11 +194,14 @@ fun MovieCarouselItem(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1
                 )
+
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
-                    text = "Exit : ${movie.releaseDate}",
+                    text = "Sortie : ${movie.releaseDate}",
                     style = MaterialTheme.typography.bodySmall
                 )
+
                 if (movie.category.isNotBlank()) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
