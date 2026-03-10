@@ -97,7 +97,6 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF7F7F9))
             .statusBarsPadding()
             .navigationBarsPadding()
     ) {
