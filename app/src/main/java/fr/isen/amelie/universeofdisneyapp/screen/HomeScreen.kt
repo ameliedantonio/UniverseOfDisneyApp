@@ -39,17 +39,34 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.style.TextAlign
 
+import com.google.firebase.auth.FirebaseAuth
+
 @Composable
 fun HomeScreen(
     onMovieClick: (Movie) -> Unit
 ) {
     val db = FirebaseDatabase.getInstance()
     val moviesRef = db.getReference("movies")
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid
 
     var randomMovie by remember { mutableStateOf<Movie?>(null) }
     var movieList by remember { mutableStateOf<List<Movie>>(emptyList()) }
+    var firstName by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
+        if (userId != null) {
+            db.getReference("users").child(userId).child("firstName")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        firstName = snapshot.getValue(String::class.java) ?: ""
+                    }
+                    override fun onCancelled(error: DatabaseError) {
+                        println("User firstname error : ${error.message}")
+                    }
+                })
+        }
+
         moviesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val movies = mutableListOf<Movie>()
@@ -74,7 +91,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        AppTopBar(title = "Hi")
+        AppTopBar(title = if (firstName.isNotBlank()) "Hi $firstName" else "Hi")
 
         Column(
             modifier = Modifier

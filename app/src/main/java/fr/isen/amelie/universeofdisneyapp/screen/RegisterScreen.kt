@@ -34,6 +34,7 @@ fun RegisterScreen(
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -43,6 +44,14 @@ fun RegisterScreen(
     ) {
         Text("Create an account")
         Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = firstName,
+            onValueChange = { firstName = it },
+            label = { Text("First name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = email,
@@ -63,7 +72,7 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                if (email.isNotBlank() && password.isNotBlank()) {
+                if (firstName.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
@@ -72,6 +81,7 @@ fun RegisterScreen(
                                 if (user != null) {
                                     val userData = mapOf(
                                         "uid" to user.uid,
+                                        "firstName" to firstName,
                                         "email" to email
                                     )
                                     database.child("users")
