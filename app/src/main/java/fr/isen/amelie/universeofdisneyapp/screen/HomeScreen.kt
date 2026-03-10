@@ -67,14 +67,14 @@ fun HomeScreen(
                 }
             }
             override fun onCancelled(error: DatabaseError) {
-                println("Erreur Realtime Database : ${error.message}")
+                println("Realtime Database error : ${error.message}")
             }
         })
     }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        AppTopBar(title = "Bonjour")
+        AppTopBar(title = "Hi")
 
         Column(
             modifier = Modifier
@@ -102,11 +102,11 @@ fun HomeScreen(
                                 .background(Color.LightGray),
                             contentScale = ContentScale.Crop,
                             onSuccess = {
-                                println("RANDOM IMAGE OK = ${movie.imageUrl}")
+                                println("Random image ok = ${movie.imageUrl}")
                             },
                             onError = {
-                                println("RANDOM IMAGE ERROR = ${movie.imageUrl}")
-                                println("CAUSE = ${it.result.throwable}")
+                                println("Random image error = ${movie.imageUrl}")
+                                println("Cause = ${it.result.throwable}")
                             }
                         )
 
@@ -127,13 +127,13 @@ fun HomeScreen(
                                 onClick = { onMovieClick(movie) },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("Voir le détail")
+                                Text("See detail")
                             }
                         }
                     }
                 }
             } ?: Text(
-                text = "Aucun film trouvé",
+                text = "No movies found",
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
@@ -185,11 +185,11 @@ fun MovieCarouselItem(
                     .background(Color.LightGray),
                 contentScale = ContentScale.Crop,
                 onSuccess = {
-                    println("IMAGE OK = ${movie.imageUrl}")
+                    println("Image ok = ${movie.imageUrl}")
                 },
                 onError = {
-                    println("IMAGE ERROR = ${movie.imageUrl}")
-                    println("CAUSE = ${it.result.throwable}")
+                    println("image error = ${movie.imageUrl}")
+                    println("cause = ${it.result.throwable}")
                 }
             )
 
@@ -206,7 +206,7 @@ fun MovieCarouselItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Sortie : ${movie.releaseDate}",
+                    text = "Exit : ${movie.releaseDate}",
                     style = MaterialTheme.typography.bodySmall
                 )
 
