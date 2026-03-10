@@ -230,9 +230,6 @@ fun AppNavigation() {
             }
             composable("profile") {
                 ProfileScreen(
-                    onBackClick = {
-                        navController.navigate("universes")
-                    },
                     onLogoutClick = {
                         navController.navigate("login") {
                             popUpTo(0)
