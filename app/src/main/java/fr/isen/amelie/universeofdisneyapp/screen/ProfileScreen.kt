@@ -105,7 +105,6 @@ fun ProfileScreen(
             email = email,
             onEditProfileClick = onEditProfileClick
         )
-
         Spacer(modifier = Modifier.height(20.dp))
 
         ProfileMenuGrid(
@@ -114,7 +113,6 @@ fun ProfileScreen(
             ownedCount = ownedMovies.size,
             getRidCount = wantToGetRidMovies.size
         )
-
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
@@ -150,7 +148,6 @@ fun ProfileHeaderCard(
             Color(0xFFFF7E5F)
         )
     )
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,7 +177,6 @@ fun ProfileHeaderCard(
                     tint = Color.White
                 )
             }
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -191,7 +187,6 @@ fun ProfileHeaderCard(
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Surface(
@@ -210,7 +205,6 @@ fun ProfileHeaderCard(
                         )
                     }
                 }
-
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
@@ -219,7 +213,6 @@ fun ProfileHeaderCard(
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
-
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
@@ -258,7 +251,6 @@ fun ProfileMenuGrid(
                 modifier = Modifier.weight(1f)
             )
         }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -301,7 +293,6 @@ fun ProfileMenuCard(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF111111)
             )
-
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
