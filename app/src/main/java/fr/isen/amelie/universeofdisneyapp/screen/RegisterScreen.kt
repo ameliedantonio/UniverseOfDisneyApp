@@ -100,20 +100,20 @@ fun RegisterScreen(
                 fontWeight = FontWeight.ExtraBold,
                 color = colorResource(id = R.color.blue_soft_white)
             )
-            Spacer(modifier = Modifier.height(8.dp)) //TODO
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Sign up to continue",
                 style = MaterialTheme.typography.bodyLarge,
                 color = colorResource(id = R.color.blue_soft_white)
             )
-            Spacer(modifier = Modifier.height(30.dp)) //TODO
+            Spacer(modifier = Modifier.height(30.dp))
         }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.TopCenter) //TODO
-                .padding(top = 220.dp), //TODO
+                .align(Alignment.TopCenter)
+                .padding(top = 230.dp), //pour baisser la card blanche
             shape = RoundedCornerShape(28.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             colors = CardDefaults.cardColors(
