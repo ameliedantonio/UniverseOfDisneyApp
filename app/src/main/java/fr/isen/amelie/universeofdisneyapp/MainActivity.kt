@@ -278,7 +278,12 @@ fun AppNavigation() {
                     )
                 }
                 composable("mymovies") {
-                    MyMoviesScreen()
+                    MyMoviesScreen(
+                        onMovieClick = { movie ->
+                            selectedMovie = movie
+                            navController.navigate("movieDetail")
+                        }
+                    )
                 }
                 composable("profile") {
                     ProfileScreen(

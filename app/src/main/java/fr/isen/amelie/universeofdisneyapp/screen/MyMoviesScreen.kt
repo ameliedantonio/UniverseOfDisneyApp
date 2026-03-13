@@ -52,9 +52,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import fr.isen.amelie.universeofdisneyapp.R
 import fr.isen.amelie.universeofdisneyapp.activity.MovieStatus
+import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
 @Composable
-fun MyMoviesScreen() {
+fun MyMoviesScreen(
+    onMovieClick: (Movie) -> Unit
+) {
     val auth = FirebaseAuth.getInstance()
     val database = FirebaseDatabase.getInstance().reference
     val movieStatuses = remember { mutableStateListOf<MovieStatus>() }
@@ -195,10 +198,25 @@ fun MyMoviesScreen() {
                     )
                 }
             } else {
-                items(displayedMovies) { movie ->
+                items(displayedMovies) { movieStatus ->
                     MyMovieItemCard(
-                        title = movie.title,
-                        releaseDate = movie.releaseDate
+                        title = movieStatus.title,
+                        releaseDate = movieStatus.releaseDate,
+                        onClick = {
+                            database
+                                .child("movies")
+                                .child(movieStatus.movieId)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        val movie = snapshot.getValue(Movie::class.java)
+                                        if (movie != null) {
+                                            onMovieClick(movie)
+                                        }
+                                    }
+                                    override fun onCancelled(error: DatabaseError) {
+                                    }
+                                })
+                        }
                     )
                 }
             }
@@ -270,7 +288,7 @@ fun MyMoviesCategoryCard(
     )
     val animatedContainerColor by animateColorAsState(
         targetValue = if (isSelected) {
-            colorResource(id = R.color.blue_mid)
+            colorResource(id = R.color.blue_dark)
         } else {
             colorResource(id = R.color.blue_soft_white).copy(alpha = 0.90f)
         },
@@ -331,10 +349,13 @@ fun MyMoviesCategoryCard(
 @Composable
 fun MyMovieItemCard(
     title: String,
-    releaseDate: String
+    releaseDate: String,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {onClick() },
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
