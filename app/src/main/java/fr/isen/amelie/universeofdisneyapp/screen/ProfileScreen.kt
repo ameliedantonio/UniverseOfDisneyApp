@@ -44,6 +44,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.res.colorResource
 import fr.isen.amelie.universeofdisneyapp.R
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
 
 @Composable
 fun ProfileScreen(
@@ -56,10 +60,20 @@ fun ProfileScreen(
 
     val user = auth.currentUser
     val email = user?.email.orEmpty()
-    val displayName = email.substringBefore("@").ifBlank { "User" }
+    var displayName by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         if (user != null) {
+            database.child("users")
+                .child(user.uid)
+                .child("firstName")
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    displayName = snapshot.getValue(String::class.java) ?: ""
+                }
+                .addOnFailureListener {
+                    displayName = ""
+                }
             database
                 .child("users")
                 .child(user.uid)
@@ -202,7 +216,7 @@ fun ProfileHeaderCard(
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.ExtraBold,
                             color = colorResource(id = R.color.blue_dark)
-                            )
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
