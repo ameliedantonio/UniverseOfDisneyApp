@@ -7,7 +7,8 @@ data class Movie(
     val category: String = "",
     val releaseDate: String = "",
     val genre: String = "",
-    val posterPath: String = ""
+    val posterPath: String = "",
+    val overview: String = ""
     ){
     val imageUrl: String
         get() = "https://image.tmdb.org/t/p/w500$posterPath"

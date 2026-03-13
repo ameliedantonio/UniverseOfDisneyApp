@@ -8,7 +8,9 @@ data class MovieStatus(
     val releaseDate: String = "",
     val status: String = "",
     val userEmail: String = "",
-    val posterPath: String = ""
+    val posterPath: String = "",
+    val viewStatus: String = "",
+    val ownershipStatus: String = ""
 ) {
     val imageUrl: String
         get() = "https://image.tmdb.org/t/p/w500$posterPath"
