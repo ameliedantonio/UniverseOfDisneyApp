@@ -246,7 +246,7 @@ fun AppNavigation() {
                 composable("universes") {
                     UniverseScreen(
                         onUniverseClick = { universe ->
-                            navController.navigate("movies/${universe.id}")
+                            navController.navigate("movies/${universe.id}/${universe.name}")
                         },
                         onGenreClick = { genre ->
                             navController.navigate("moviesByGenre/$genre")
@@ -254,21 +254,24 @@ fun AppNavigation() {
                     )
                 }
                 composable(
-                    route = "movies/{universeId}",
-                    arguments = listOf(navArgument("universeId") { type = NavType.StringType })
+                    route = "movies/{universeId}/{universeName}",
+                    arguments = listOf(
+                        navArgument("universeId") { type = NavType.StringType },
+                        navArgument("universeName") { type = NavType.StringType }
+                        )
                 ) { backStackEntry ->
                     val universeId = backStackEntry.arguments?.getString("universeId") ?: ""
+                    val universeName = backStackEntry.arguments?.getString("universeName") ?: ""
+
                     MovieScreen(
                         universeId = universeId,
+                        universeName = universeName,
                         onMovieClick = { movie ->
                             selectedMovie = movie
                             navController.navigate("movieDetail")
                         },
                         onBackToUniverses = {
                             navController.navigate("universes")
-                        },
-                        onProfileClick = {
-                            navController.navigate("profile")
                         }
                     )
                 }
