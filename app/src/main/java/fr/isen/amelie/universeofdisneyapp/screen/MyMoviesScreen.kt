@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,11 +46,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.animation.core.tween
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import coil3.compose.AsyncImage
 import fr.isen.amelie.universeofdisneyapp.R
 import fr.isen.amelie.universeofdisneyapp.activity.MovieStatus
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
@@ -202,6 +206,7 @@ fun MyMoviesScreen(
                     MyMovieItemCard(
                         title = movieStatus.title,
                         releaseDate = movieStatus.releaseDate,
+                        imageUrl = movieStatus.imageUrl,
                         onClick = {
                             database
                                 .child("movies")
@@ -283,7 +288,8 @@ fun MyMoviesCategoryCard(
     icon: ImageVector
 ) {
     val animatedScale by animateFloatAsState(
-        targetValue = if (isSelected) 1.05f else 1f,
+        targetValue = if (isSelected) 1.12f else 1f,
+        animationSpec = tween(250),
         label = "cardScale"
     )
     val animatedContainerColor by animateColorAsState(
@@ -304,7 +310,7 @@ fun MyMoviesCategoryCard(
     )
     Card(
         modifier = modifier
-            .height(120.dp)
+            .height(80.dp)
             .scale(animatedScale)
             .clickable { onClick() },
         shape = RoundedCornerShape(22.dp),
@@ -315,33 +321,35 @@ fun MyMoviesCategoryCard(
             containerColor = animatedContainerColor
         )
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = title,
                 tint = animatedTextColor,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(28.dp)
             )
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = animatedTextColor
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "$count movies",
-                style = MaterialTheme.typography.bodyMedium,
-                color = animatedTextColor
-            )
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = animatedTextColor
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "$count movies",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = animatedTextColor
+                )
+            }
         }
     }
 }
@@ -350,34 +358,51 @@ fun MyMoviesCategoryCard(
 fun MyMovieItemCard(
     title: String,
     releaseDate: String,
+    imageUrl: String,
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {onClick() },
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.94f)
+            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.95f)
         )
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(110.dp)
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue_dark)
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(90.dp)
+                    .fillMaxHeight()
             )
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "Release: $releaseDate",
-                style = MaterialTheme.typography.bodyMedium,
-                color = colorResource(id = R.color.blue_dark)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.blue_dark)
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Release : $releaseDate",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colorResource(id = R.color.blue_mid)
+                )
+            }
         }
     }
 }

@@ -68,7 +68,8 @@ fun MovieDetailScreen(
                 "category" to movie.category,
                 "releaseDate" to movie.releaseDate,
                 "status" to status,
-                "userEmail" to (user.email ?: "")
+                "userEmail" to (user.email ?: ""),
+                "posterPath" to movie.posterPath
             )
             database.child("users")
                 .child(user.uid)
