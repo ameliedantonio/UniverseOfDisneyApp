@@ -171,7 +171,6 @@ fun HomeScreen(
                 text = "No movies found",
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Top 10 Movies Today",
@@ -191,7 +190,6 @@ fun HomeScreen(
                     )
                 }
             }
-
             Text(
                 text = "Recommended for You",
                 style = MaterialTheme.typography.headlineSmall,
@@ -244,7 +242,6 @@ fun MovieCarouselItem(
                     println("cause = ${it.result.throwable}")
                 }
             )
-
             Column(
                 modifier = Modifier.padding(12.dp)
             ) {
@@ -256,7 +253,7 @@ fun MovieCarouselItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Exit : ${movie.releaseDate}",
+                    text = "Release : ${movie.releaseDate}",
                     style = MaterialTheme.typography.bodySmall
                 )
                 if (movie.category.isNotBlank()) {

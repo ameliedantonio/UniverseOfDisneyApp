@@ -57,7 +57,6 @@ fun MovieDetailScreen(
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
     fun saveMovieStatus(status: String) {
         val user = auth.currentUser
 

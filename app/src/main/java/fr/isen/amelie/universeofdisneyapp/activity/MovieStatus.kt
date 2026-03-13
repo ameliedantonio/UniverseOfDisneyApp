@@ -6,5 +6,6 @@ data class MovieStatus(
     val universeId: String = "",
     val category: String = "",
     val releaseDate: String = "",
-    val status: String = ""
+    val status: String = "",
+    val userEmail: String = ""
 )

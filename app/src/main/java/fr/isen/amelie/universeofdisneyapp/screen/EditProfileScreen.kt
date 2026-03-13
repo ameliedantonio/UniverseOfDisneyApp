@@ -1,6 +1,5 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,11 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import fr.isen.amelie.universeofdisneyapp.R
 
 @Composable
 fun EditProfileScreen(
@@ -57,7 +58,7 @@ fun EditProfileScreen(
             text = "Edit profile",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF111111)
+            color = colorResource(id = R.color.blue_dark)
         )
         Spacer(modifier = Modifier.height(20.dp))
         Card(
@@ -126,7 +127,7 @@ fun EditProfileScreen(
                     Text(
                         text = message,
                         color = if (message.contains("success", ignoreCase = true)) {
-                            Color(0xFF2E7D32)
+                            colorResource(id = R.color.green)
                         } else {
                             Color.Red
                         }

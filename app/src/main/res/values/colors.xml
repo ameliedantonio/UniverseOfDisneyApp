@@ -12,4 +12,7 @@
     <color name="blue_mid">#2F5FA0</color>
     <color name="blue_light">#4A90E2</color>>
     <color name="blue_soft_white">#EAF3FF</color>
+
+    <color name="green">#2E7D32</color>
+    <color name="grey">#6B7280</color>
 </resources>

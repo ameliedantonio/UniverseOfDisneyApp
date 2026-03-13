@@ -83,7 +83,7 @@ fun MovieScreen(
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Text(movie.title)
-                            Text("Exit : ${movie.releaseDate}")
+                            Text("Release : ${movie.releaseDate}")
                             if (movie.category.isNotBlank()) {
                                 Text("Category : ${movie.category}")
                             }

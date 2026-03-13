@@ -80,7 +80,7 @@ fun SearchScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(movie.title)
-                            Text("Exit : ${movie.releaseDate}")
+                            Text("Release : ${movie.releaseDate}")
                         }
                     }
                 }

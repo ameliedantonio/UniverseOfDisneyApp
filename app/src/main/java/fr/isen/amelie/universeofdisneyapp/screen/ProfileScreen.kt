@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -43,6 +42,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.colorResource
+import fr.isen.amelie.universeofdisneyapp.R
 
 @Composable
 fun ProfileScreen(
@@ -83,7 +84,6 @@ fun ProfileScreen(
                             )
                         }
                     }
-
                     override fun onCancelled(error: DatabaseError) {}
                 })
         }
@@ -126,7 +126,7 @@ fun ProfileScreen(
                 .height(52.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF111111),
+                containerColor = colorResource(id = R.color.blue_dark),
                 contentColor = Color.White
             )
         ) {
@@ -144,8 +144,8 @@ fun ProfileHeaderCard(
 {
     val gradient = Brush.linearGradient(
         colors = listOf(
-            Color(0xFFFF5F6D),
-            Color(0xFFFF7E5F)
+            colorResource(id = R.color.blue_soft_white),
+            colorResource(id = R.color.blue_light)
         )
     )
     Card(
@@ -201,8 +201,8 @@ fun ProfileHeaderCard(
                             text = displayName.take(1).uppercase(),
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFFFF6B6B)
-                        )
+                            color = colorResource(id = R.color.blue_dark)
+                            )
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
@@ -291,14 +291,14 @@ fun ProfileMenuCard(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF111111)
+                color = colorResource(id = R.color.blue_dark)
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "$count movies",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF6B7280)
+                color = colorResource(id = R.color.grey)
             )
         }
     }
