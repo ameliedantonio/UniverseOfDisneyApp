@@ -247,6 +247,9 @@ fun AppNavigation() {
                     UniverseScreen(
                         onUniverseClick = { universe ->
                             navController.navigate("movies/${universe.id}")
+                        },
+                        onGenreClick = { genre ->
+                            navController.navigate("moviesByGenre/$genre")
                         }
                     )
                 }
