@@ -101,7 +101,6 @@ fun EditProfileScreen(
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White
             )
-
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
@@ -109,7 +108,6 @@ fun EditProfileScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.8f)
             )
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Card(
@@ -130,17 +128,16 @@ fun EditProfileScreen(
                         Box(
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(Color.LightGray, CircleShape),
+                                .background(Color.White, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = name.take(1).uppercase().ifBlank { "U" },
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = colorResource(id = R.color.blue_dark)
                             )
                         }
-
                         Spacer(modifier = Modifier.size(16.dp))
 
                         Column {
@@ -148,19 +145,18 @@ fun EditProfileScreen(
                                 text = name.ifBlank { "User" },
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = colorResource(id = R.color.blue_dark)
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = email,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
                             )
                         }
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(20.dp))
 
             Card(
@@ -179,7 +175,8 @@ fun EditProfileScreen(
                         Text(
                             text = "Profile information",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.blue_dark)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -192,7 +189,6 @@ fun EditProfileScreen(
                             singleLine = true,
                             shape = RoundedCornerShape(16.dp)
                         )
-
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
@@ -225,7 +221,8 @@ fun EditProfileScreen(
                         Text(
                             text = "Security",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.blue_dark)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -233,9 +230,9 @@ fun EditProfileScreen(
                         Text(
                             text = "Leave these fields empty if you do not want to change your password.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                            color = colorResource(id = R.color.blue_dark)
 
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
 
                         OutlinedTextField(
@@ -247,7 +244,6 @@ fun EditProfileScreen(
                             visualTransformation = PasswordVisualTransformation(),
                             shape = RoundedCornerShape(16.dp)
                         )
-
                         Spacer(modifier = Modifier.height(12.dp))
 
                         OutlinedTextField(
@@ -283,7 +279,6 @@ fun EditProfileScreen(
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
@@ -359,7 +354,6 @@ fun EditProfileScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
@@ -376,7 +370,8 @@ fun EditProfileScreen(
             ) {
                 Text(
                     text = "Back",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = colorResource(id = R.color.blue_dark)
                 )
             }
 
