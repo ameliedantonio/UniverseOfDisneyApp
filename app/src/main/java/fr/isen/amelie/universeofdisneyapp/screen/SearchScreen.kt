@@ -1,6 +1,5 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,6 +20,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.res.colorResource
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import fr.isen.amelie.universeofdisneyapp.R
+import androidx.compose.foundation.background
 
 @Composable
 fun SearchScreen(
@@ -36,25 +42,39 @@ fun SearchScreen(
         database.child("movies")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    allMovies.clear()
+                    val tempMovies = mutableListOf<Movie>()
+
                     for (child in snapshot.children) {
                         val movie = child.getValue(Movie::class.java)
                         if (movie != null) {
-                            allMovies.add(movie)
+                            tempMovies.add(movie)
                         }
                     }
+
+                    allMovies.clear()
+                    allMovies.addAll(
+                        tempMovies.distinctBy { it.title.trim().lowercase() }
+                    )
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
     }
-    val filteredMovies = allMovies.filter {
-        it.title.contains(searchText, ignoreCase = true)
+
+    val filteredMovies = if (searchText.isBlank()) {
+        emptyList()
+    } else {
+        allMovies.filter {
+            it.title.trim().startsWith(searchText.trim(), ignoreCase = true)
+        }
     }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         AppTopBar(title = "Search")
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -62,27 +82,42 @@ fun SearchScreen(
         ) {
             OutlinedTextField(
                 value = searchText,
-                onValueChange = { searchText = it },
-                label = { Text("Search for a movie") },
-                modifier = Modifier.fillMaxWidth()
+                onValueChange = { searchText = it.trimStart() },
+                placeholder = { Text("Search for a movie...") },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search"
+                    )
+                },
+                shape = RoundedCornerShape(28.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent,
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(
+                        color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.92f),
+                        shape = RoundedCornerShape(28.dp)
+                    )
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(filteredMovies) { movie ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onMovieClick(movie) },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(movie.title)
-                            Text("Release : ${movie.releaseDate}")
-                        }
-                    }
+                items(
+                    items = filteredMovies,
+                    key = { movie -> movie.title }
+                ) { movie ->
+                    MovieHorizontalCard(
+                        movie = movie,
+                        onClick = { onMovieClick(movie) }
+                    )
                 }
             }
         }
