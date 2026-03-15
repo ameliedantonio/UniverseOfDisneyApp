@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,6 +40,10 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.colorResource
 import fr.isen.amelie.universeofdisneyapp.R
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.TextUnit
 
 @Composable
 fun HomeScreen(
@@ -282,15 +287,30 @@ fun Top10MovieItem(
             .height(220.dp)
             .clickable { onClick() }
     ) {
+        if (rank == 10) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+            ) {
+                OutlinedNumberText(
+                    text = "1",
+                    fontSize = 90.sp,
+                    modifier = Modifier.offset(x = (-10).dp)
+                )
 
-        Text(
-            text = rank.toString(),
-            fontSize = 90.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = colorResource(id = R.color.blue_dark),
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-        )
+                OutlinedNumberText(
+                    text = "0",
+                    fontSize = 90.sp,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+            }
+        } else {
+            OutlinedNumberText(
+                text = rank.toString(),
+                fontSize = 90.sp,
+                modifier = Modifier.align(Alignment.BottomStart)
+            )
+        }
 
         Card(
             modifier = Modifier
@@ -309,4 +329,30 @@ fun Top10MovieItem(
             )
         }
     }
+}
+
+@Composable
+fun OutlinedNumberText(
+    text: String,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontWeight = FontWeight.ExtraBold,
+        color = Color.White,
+        style = TextStyle(
+            drawStyle = Stroke(width = 8f)
+        ),
+        modifier = modifier
+    )
+
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontWeight = FontWeight.ExtraBold,
+        color = colorResource(id = R.color.blue_mid),
+        modifier = modifier
+    )
 }

@@ -53,6 +53,7 @@ import fr.isen.amelie.universeofdisneyapp.screen.SearchScreen
 import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
 import fr.isen.amelie.universeofdisneyapp.screen.EditProfileScreen
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : ComponentActivity() {
@@ -210,7 +211,7 @@ fun AppNavigation() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = "login",
+                startDestination = if (FirebaseAuth.getInstance().currentUser != null) "home" else "login",
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable("login") {
@@ -295,7 +296,7 @@ fun AppNavigation() {
                     ProfileScreen(
                         onLogoutClick = {
                             navController.navigate("login") {
-                                popUpTo(0)
+                                popUpTo(0) { inclusive = true }
                             }
                         },
                         onEditProfileClick = {
