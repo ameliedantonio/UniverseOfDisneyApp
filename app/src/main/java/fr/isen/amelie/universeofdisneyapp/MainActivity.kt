@@ -54,6 +54,9 @@ import fr.isen.amelie.universeofdisneyapp.screen.UniverseScreen
 import fr.isen.amelie.universeofdisneyapp.ui.theme.UniverseOfDisneyAppTheme
 import fr.isen.amelie.universeofdisneyapp.screen.EditProfileScreen
 import com.google.firebase.auth.FirebaseAuth
+import fr.isen.amelie.universeofdisneyapp.screen.OwnedMoviesScreen
+import fr.isen.amelie.universeofdisneyapp.screen.SharedGetRidScreen
+import fr.isen.amelie.universeofdisneyapp.screen.WantToGetRidScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -301,6 +304,15 @@ fun AppNavigation() {
                         },
                         onEditProfileClick = {
                             navController.navigate("edit_profile")
+                        },
+                        onOwnedClick = {
+                            navController.navigate("ownedMovies")
+                        },
+                        onGetRidClick = {
+                            navController.navigate("wantToGetRid")
+                        },
+                        onSharedGetRidClick = {
+                            navController.navigate("sharedGetRid")
                         }
                     )
                 }
@@ -308,6 +320,39 @@ fun AppNavigation() {
                     EditProfileScreen(
                         onBackClick = {
                             navController.popBackStack()
+                        }
+                    )
+                }
+                composable("ownedMovies") {
+                    OwnedMoviesScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                        onMovieClick = { movie ->
+                            selectedMovie = movie
+                            navController.navigate("movieDetail")
+                        }
+                    )
+                }
+                composable("wantToGetRid") {
+                    WantToGetRidScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                        onMovieClick = { movie ->
+                            selectedMovie = movie
+                            navController.navigate("movieDetail")
+                        }
+                    )
+                }
+                composable("sharedGetRid") {
+                    SharedGetRidScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                        onMovieClick = { movie ->
+                            selectedMovie = movie
+                            navController.navigate("movieDetail")
                         }
                     )
                 }

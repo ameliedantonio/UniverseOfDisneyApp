@@ -1,6 +1,8 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,55 +15,55 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Groups
+import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import fr.isen.amelie.universeofdisneyapp.activity.MovieStatus
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.ui.res.colorResource
 import fr.isen.amelie.universeofdisneyapp.R
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-
 
 @Composable
 fun ProfileScreen(
     onLogoutClick: () -> Unit,
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    onOwnedClick: () -> Unit,
+    onGetRidClick: () -> Unit,
+    onSharedGetRidClick: () -> Unit
 ) {
     val auth = FirebaseAuth.getInstance()
     val database = FirebaseDatabase.getInstance().reference
-    val movieStatuses = remember { mutableStateListOf<MovieStatus>() }
-
     val user = auth.currentUser
     val email = user?.email.orEmpty()
     var displayName by remember { mutableStateOf("") }
-
     LaunchedEffect(Unit) {
         if (user != null) {
             database.child("users")
@@ -74,67 +76,50 @@ fun ProfileScreen(
                 .addOnFailureListener {
                     displayName = ""
                 }
-            database
-                .child("users")
-                .child(user.uid)
-                .child("movieStatuses")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        movieStatuses.clear()
-                        for (child in snapshot.children) {
-                            val movieId = child.child("movieId").getValue(String::class.java) ?: ""
-                            val title = child.child("title").getValue(String::class.java) ?: ""
-                            val releaseDate = child.child("releaseDate").getValue(String::class.java) ?: ""
-                            val userEmail = child.child("userEmail").getValue(String::class.java) ?: ""
-                            val posterPath = child.child("posterPath").getValue(String::class.java) ?: ""
-                            val viewStatus = child.child("viewStatus").getValue(String::class.java) ?: ""
-                            val ownershipStatus = child.child("ownershipStatus").getValue(String::class.java) ?: ""
-                            movieStatuses.add(
-                                MovieStatus(
-                                    movieId = movieId,
-                                    title = title,
-                                    releaseDate = releaseDate,
-                                    userEmail = userEmail,
-                                    posterPath = posterPath,
-                                    viewStatus = viewStatus,
-                                    ownershipStatus = ownershipStatus
-                                )
-                            )
-                        }
-                    }
-                    override fun onCancelled(error: DatabaseError) {}
-                })
         }
     }
-
-    val watchedMovies = movieStatuses.filter { it.viewStatus == "watched" }
-    val wantToWatchMovies = movieStatuses.filter { it.viewStatus == "want_to_watch" }
-    val ownedMovies = movieStatuses.filter {
-        it.ownershipStatus == "owned" || it.ownershipStatus == "want_to_get_rid"
-    }
-    val wantToGetRidMovies = movieStatuses.filter { it.ownershipStatus == "want_to_get_rid" }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
+            .verticalScroll(rememberScrollState())
     ) {
         ProfileHeaderCard(
             displayName = displayName,
             email = email,
             onEditProfileClick = onEditProfileClick
         )
-        Spacer(modifier = Modifier.height(20.dp))
-
-        ProfileMenuGrid(
-            watchedCount = watchedMovies.size,
-            wantToWatchCount = wantToWatchMovies.size,
-            ownedCount = ownedMovies.size,
-            getRidCount = wantToGetRidMovies.size
-        )
         Spacer(modifier = Modifier.height(24.dp))
-
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ProfileActionCard(
+                title = "Owned",
+                icon = Icons.Default.Movie,
+                modifier = Modifier.weight(1f),
+                onClick = onOwnedClick
+            )
+            ProfileActionCard(
+                title = "Get rid",
+                icon = Icons.Default.DeleteSweep,
+                modifier = Modifier.weight(1f),
+                onClick = onGetRidClick
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        ProfileActionCard(
+            title = "Shared get rid",
+            icon = Icons.Default.Groups,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            onClick = onSharedGetRidClick
+        )
+        Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = {
                 auth.signOut()
@@ -143,15 +128,20 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .height(52.dp),
+                .height(54.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.blue_dark),
                 contentColor = Color.White
             )
         ) {
-            Text("Log out")
+            Text(
+                text = "Log out",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
@@ -159,9 +149,8 @@ fun ProfileScreen(
 fun ProfileHeaderCard(
     displayName: String,
     email: String,
-    onEditProfileClick: () -> Unit = {}
-)
-{
+    onEditProfileClick: () -> Unit
+) {
     val gradient = Brush.linearGradient(
         colors = listOf(
             colorResource(id = R.color.blue_soft_white),
@@ -208,11 +197,10 @@ fun ProfileHeaderCard(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(18.dp))
-
                 Surface(
                     modifier = Modifier.size(88.dp),
                     shape = CircleShape,
-                    color = Color.White.copy(alpha = 0.95f)
+                    color = Color.White
                 ) {
                     Box(
                         contentAlignment = Alignment.Center
@@ -226,7 +214,6 @@ fun ProfileHeaderCard(
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-
                 Text(
                     text = displayName.replaceFirstChar { it.uppercase() },
                     style = MaterialTheme.typography.titleLarge,
@@ -234,7 +221,6 @@ fun ProfileHeaderCard(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = email.ifBlank { "No email" },
                     style = MaterialTheme.typography.bodyMedium,
@@ -246,79 +232,87 @@ fun ProfileHeaderCard(
 }
 
 @Composable
-fun ProfileMenuGrid(
-    watchedCount: Int,
-    wantToWatchCount: Int,
-    ownedCount: Int,
-    getRidCount: Int
-) {
-    Column(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ProfileMenuCard(
-                title = "Watched",
-                count = watchedCount,
-                modifier = Modifier.weight(1f)
-            )
-            ProfileMenuCard(
-                title = "Want to watch",
-                count = wantToWatchCount,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ProfileMenuCard(
-                title = "Owned",
-                count = ownedCount,
-                modifier = Modifier.weight(1f)
-            )
-            ProfileMenuCard(
-                title = "Want to get rid",
-                count = getRidCount,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProfileMenuCard(
+fun ProfileActionCard(
     title: String,
-    count: Int,
-    modifier: Modifier = Modifier
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = modifier.height(110.dp),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        modifier = modifier
+            .height(120.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(22.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = colorResource(id = R.color.blue_dark),
+                modifier = Modifier.size(36.dp)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.blue_dark)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
 
+@Composable
+fun EmptyStateCard(
+    title: String,
+    subtitle: String
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.15f)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(
+            1.dp,
+            colorResource(id = R.color.blue_soft_white).copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(26.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.Movie,
+                contentDescription = null,
+                tint = colorResource(id = R.color.blue_soft_white),
+                modifier = Modifier.size(42.dp)
+            )
+            Spacer(Modifier.height(14.dp))
             Text(
-                text = "$count movies",
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.blue_soft_white)
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = colorResource(id = R.color.grey)
+                color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.7f)
             )
         }
     }
