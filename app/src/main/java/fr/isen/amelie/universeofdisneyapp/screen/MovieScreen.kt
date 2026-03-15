@@ -55,7 +55,8 @@ import fr.isen.amelie.universeofdisneyapp.activity.Movie
 
 @Composable
 fun MovieScreen(
-    universeId: String,
+    universeId: String = "",
+    genre: String = "",
     universeName: String,
     onMovieClick: (Movie) -> Unit,
     onBackToUniverses: () -> Unit
@@ -63,15 +64,21 @@ fun MovieScreen(
     val database = FirebaseDatabase.getInstance().reference
     val movies = remember { mutableStateListOf<Movie>() }
     var selectedCategory by remember { mutableStateOf("All") }
-    LaunchedEffect(universeId) {
+    LaunchedEffect(universeId, genre) {
         database.child("movies")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     movies.clear()
                     for (data in snapshot.children) {
                         val movie = data.getValue(Movie::class.java)
-                        if (movie != null && movie.universeId == universeId) {
-                            movies.add(movie)
+                        if (movie != null) {
+                            val matchesUniverse =
+                                universeId.isNotBlank() && movie.universeId == universeId
+                            val matchesGenre =
+                                genre.isNotBlank() && movie.genre.equals(genre, ignoreCase = true)
+                            if (matchesUniverse || matchesGenre) {
+                                movies.add(movie)
+                            }
                         }
                     }
                 }

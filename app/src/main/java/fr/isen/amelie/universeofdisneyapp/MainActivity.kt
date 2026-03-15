@@ -258,6 +258,27 @@ fun AppNavigation() {
                     )
                 }
                 composable(
+                    route = "moviesByGenre/{genre}",
+                    arguments = listOf(
+                        navArgument("genre") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val genre = backStackEntry.arguments?.getString("genre") ?: ""
+
+                    MovieScreen(
+                        universeId = "",
+                        genre = genre,
+                        universeName = genre,
+                        onMovieClick = { movie ->
+                            selectedMovie = movie
+                            navController.navigate("movieDetail")
+                        },
+                        onBackToUniverses = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+                composable(
                     route = "movies/{universeId}/{universeName}",
                     arguments = listOf(
                         navArgument("universeId") { type = NavType.StringType },
