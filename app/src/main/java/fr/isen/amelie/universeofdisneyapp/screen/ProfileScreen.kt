@@ -81,19 +81,23 @@ fun ProfileScreen(
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         movieStatuses.clear()
-
                         for (child in snapshot.children) {
                             val movieId = child.child("movieId").getValue(String::class.java) ?: ""
                             val title = child.child("title").getValue(String::class.java) ?: ""
                             val releaseDate = child.child("releaseDate").getValue(String::class.java) ?: ""
-                            val status = child.child("status").getValue(String::class.java) ?: ""
-
+                            val userEmail = child.child("userEmail").getValue(String::class.java) ?: ""
+                            val posterPath = child.child("posterPath").getValue(String::class.java) ?: ""
+                            val viewStatus = child.child("viewStatus").getValue(String::class.java) ?: ""
+                            val ownershipStatus = child.child("ownershipStatus").getValue(String::class.java) ?: ""
                             movieStatuses.add(
                                 MovieStatus(
                                     movieId = movieId,
                                     title = title,
                                     releaseDate = releaseDate,
-                                    status = status
+                                    userEmail = userEmail,
+                                    posterPath = posterPath,
+                                    viewStatus = viewStatus,
+                                    ownershipStatus = ownershipStatus
                                 )
                             )
                         }
@@ -103,10 +107,12 @@ fun ProfileScreen(
         }
     }
 
-    val watchedMovies = movieStatuses.filter { it.status == "watched" }
-    val wantToWatchMovies = movieStatuses.filter { it.status == "want_to_watch" }
-    val ownedMovies = movieStatuses.filter { it.status == "owned" }
-    val wantToGetRidMovies = movieStatuses.filter { it.status == "want_to_get_rid" }
+    val watchedMovies = movieStatuses.filter { it.viewStatus == "watched" }
+    val wantToWatchMovies = movieStatuses.filter { it.viewStatus == "want_to_watch" }
+    val ownedMovies = movieStatuses.filter {
+        it.ownershipStatus == "owned" || it.ownershipStatus == "want_to_get_rid"
+    }
+    val wantToGetRidMovies = movieStatuses.filter { it.ownershipStatus == "want_to_get_rid" }
 
     Column(
         modifier = Modifier

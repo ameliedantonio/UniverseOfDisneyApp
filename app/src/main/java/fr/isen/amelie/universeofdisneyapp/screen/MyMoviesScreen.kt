@@ -94,10 +94,12 @@ fun MyMoviesScreen(
                 })
         }
     }
-    val watchedMovies = movieStatuses.filter { it.status == "watched" }
-    val wantToWatchMovies = movieStatuses.filter { it.status == "want_to_watch" }
-    val ownedMovies = movieStatuses.filter { it.status == "owned" }
-    val wantToGetRidMovies = movieStatuses.filter { it.status == "want_to_get_rid" }
+    val watchedMovies = movieStatuses.filter { it.viewStatus == "watched" }
+    val wantToWatchMovies = movieStatuses.filter { it.viewStatus == "want_to_watch" }
+    val ownedMovies = movieStatuses.filter {
+        it.ownershipStatus == "owned" || it.ownershipStatus == "want_to_get_rid"
+    }
+    val wantToGetRidMovies = movieStatuses.filter { it.ownershipStatus == "want_to_get_rid" }
 
     val displayedMovies = when (selectedCategory) {
         "watched" -> watchedMovies
