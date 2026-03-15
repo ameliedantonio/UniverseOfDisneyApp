@@ -2,13 +2,16 @@ package fr.isen.amelie.universeofdisneyapp.screen
 
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,11 +44,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
@@ -232,54 +237,49 @@ fun MovieDetailScreen(
             }
             Text(
                 text = movie.title,
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 56.dp),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold,
                 color = colorResource(id = R.color.blue_soft_white),
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        AsyncImage(
-            model = movie.imageUrl,
-            contentDescription = movie.title,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                MovieInfoChip(
-                    text = movie.releaseDate,
-                    modifier = Modifier.weight(1f)
-                )
-                MovieInfoChip(
-                    text = universeName,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                if (movie.category.isNotBlank()) {
-                    MovieInfoChip(
-                        text = movie.category,
-                        modifier = Modifier.weight(1f)
+            AsyncImage(
+                model = movie.imageUrl,
+                contentDescription = movie.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(220.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(
+                        width = 2.dp,
+                        color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.75f),
+                        shape = RoundedCornerShape(20.dp)
                     )
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(
+                modifier = Modifier.height(220.dp),
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MovieMiniInfoCard(movie.releaseDate)
+                MovieMiniInfoCard(universeName)
+                if (movie.category.isNotBlank()) {
+                    MovieMiniInfoCard(movie.category)
                 }
                 if (movie.genre.isNotBlank()) {
-                    MovieInfoChip(
-                        text = movie.genre,
-                        modifier = Modifier.weight(1f)
-                    )
+                    MovieMiniInfoCard(movie.genre)
                 }
             }
         }
@@ -487,30 +487,34 @@ fun StatusCard(
 }
 
 @Composable
-fun MovieInfoChip(
-    text: String,
-    modifier: Modifier = Modifier
+fun MovieMiniInfoCard(
+    text: String
 ) {
     Card(
-        modifier = modifier.height(54.dp),
-        shape = RoundedCornerShape(18.dp),
+        modifier = Modifier
+            .width(120.dp)
+            .height(40.dp),
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.92f)
+            containerColor = Color.Transparent
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        border = BorderStroke(
+            1.5.dp,
+            colorResource(id = R.color.blue_soft_white).copy(alpha = 0.9f)
+        )
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 14.dp),
-            contentAlignment = Alignment.CenterStart
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 text = text,
-                color = colorResource(id = R.color.blue_dark),
-                style = MaterialTheme.typography.bodyMedium,
+                color = colorResource(id = R.color.blue_soft_white),
+                style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
