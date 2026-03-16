@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import fr.isen.amelie.universeofdisneyapp.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
@@ -136,58 +138,63 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top
         ) {
             randomMovie?.let { movie ->
-                Card(
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    shape = RoundedCornerShape(18.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .aspectRatio(200f / 150f)
+                            .clip(RoundedCornerShape(20.dp))
+                    ) {
+
                         AsyncImage(
                             model = movie.imageUrl,
                             contentDescription = movie.title,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(220.dp)
-                                .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp))
-                                .background(Color.LightGray),
                             contentScale = ContentScale.Crop,
-                            onSuccess = {
-                                println("Random image ok = ${movie.imageUrl}")
-                            },
-                            onError = {
-                                println("Random image error = ${movie.imageUrl}")
-                                println("Cause = ${it.result.throwable}")
-                            }
+                            modifier = Modifier.fillMaxSize()
                         )
 
-                        Column(
-                            modifier = Modifier.padding(16.dp)
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .background(Color.White.copy(alpha = 0.75f))
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = movie.title,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
-                            )
 
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Button(
-                                onClick = { onMovieClick(movie) },
-                                modifier = Modifier.fillMaxWidth()
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text("See detail")
+
+                                Text(
+                                    text = movie.title,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                Button(
+                                    onClick = { onMovieClick(movie) },
+                                ) {
+                                    Text("See details")
+                                }
                             }
                         }
                     }
                 }
-            } ?: Text(
-                text = "No movies found",
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            }
+
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Top 10 Movies Today",
