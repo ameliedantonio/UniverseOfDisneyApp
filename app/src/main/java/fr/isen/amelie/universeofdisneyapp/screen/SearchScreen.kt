@@ -82,7 +82,7 @@ fun SearchScreen(
         ) {
             OutlinedTextField(
                 value = searchText,
-                onValueChange = { searchText = it.trimStart() },
+                onValueChange = { input -> searchText = input.filterNot { it.isWhitespace() } },
                 placeholder = { Text("Search for a movie...") },
                 singleLine = true,
                 leadingIcon = {

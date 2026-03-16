@@ -179,7 +179,7 @@ fun OwnedMoviesScreen(
         }
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = { searchQuery = it },
+            onValueChange = { input -> searchQuery = input.filterNot { it.isWhitespace() } },
             label = { Text("Search owned movies") },
             modifier = Modifier
                 .fillMaxWidth()
