@@ -250,8 +250,8 @@ fun MyMoviesHeaderCard(
     avatarKey: String?
 ) {
     val avatarMap = mapOf(
-        "avatar_ironman" to R.drawable.avengers,
-        "avatar_spiderman" to R.drawable.marvel,
+        "avatar_ironman" to R.drawable.pdp_avengers,
+        "avatar_spiderman" to R.drawable.pdp_marvel,
         "avatar_elise" to R.drawable.pdp_elise,
         "avatar_emeric" to R.drawable.pdp_emeric,
         "avatar_amelie" to R.drawable.pdp_amelie,

@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.LocalMovies
+import androidx.compose.material.icons.filled.MovieFilter
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -258,7 +260,7 @@ fun UniverseCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Public,
+                        imageVector = Icons.Default.LocalMovies,
                         contentDescription = universe.name,
                         tint = colorResource(id = R.color.blue_dark),
                         modifier = Modifier.size(24.dp)
@@ -322,10 +324,10 @@ fun GenreCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Category,
+                    imageVector = Icons.Default.MovieFilter,
                     contentDescription = genre,
                     tint = colorResource(id = R.color.blue_dark),
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(28.dp)
                 )
             }
             Spacer(modifier = Modifier.width(14.dp))

@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -39,6 +36,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import com.google.firebase.auth.FirebaseAuth
 import fr.isen.amelie.universeofdisneyapp.R
 
@@ -77,14 +77,14 @@ fun LoginScreen(
                         containerColor = Color.White
                     )                ) {
                     Box(
-                        modifier = Modifier.size(64.dp),
+                        modifier = Modifier.size(80.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Movie,
-                            contentDescription = "App icon", //icon temporaire, on mettra notre futur logo
-                            tint = colorResource(id = R.color.blue_dark),
-                            modifier = Modifier.size(30.dp)
+                        Image(
+                            painter = painterResource(id = R.drawable.logo),
+                            contentDescription = "App logo",
+                            modifier = Modifier.size(80.dp),
+                            contentScale = ContentScale.Fit
                         )
                     }
                 }
