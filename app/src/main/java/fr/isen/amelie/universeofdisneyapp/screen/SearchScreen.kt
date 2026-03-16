@@ -27,10 +27,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
-
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import fr.isen.amelie.universeofdisneyapp.R
 
 @Composable
@@ -69,7 +78,7 @@ fun SearchScreen(
         emptyList()
     } else {
         allMovies.filter {
-            it.title.trim().startsWith(searchText.trim(), ignoreCase = true)
+            it.title.trim().contains(searchText.trim(), ignoreCase = true)
         }
     }
 
@@ -85,7 +94,11 @@ fun SearchScreen(
         ) {
             OutlinedTextField(
                 value = searchText,
-                onValueChange = { input -> searchText = input },
+                onValueChange = { input ->
+                    searchText = input.filter { char ->
+                        char != '\n' && char != '\r' && char != '\t'
+                    }
+                },
                 placeholder = { Text("Search for a movie...") },
                 singleLine = true,
                 leadingIcon = {
@@ -121,17 +134,80 @@ fun SearchScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(
-                    items = filteredMovies,
-                    key = { movie -> movie.title }
-                ) { movie ->
-                    MovieHorizontalCard(
-                        movie = movie,
-                        onClick = { onMovieClick(movie) }
-                    )
+            if (searchText.isNotBlank() && filteredMovies.isNotEmpty()) {
+                Text(
+                    text = "${filteredMovies.size} result${if (filteredMovies.size > 1) "s" else ""}",
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    color = Color.White.copy(alpha = 0.85f),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            if (searchText.isBlank()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo),
+                            contentDescription = "App logo",
+                            modifier = Modifier
+                                .size(220.dp)
+                                .alpha(0.20f)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Find your favorite movie",
+                            color = colorResource(id = R.color.blue_mid).copy(alpha = 0.70f),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            } else if (filteredMovies.isEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.blue_dark),
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "No movies found for \"$searchText\"",
+                            color = colorResource(id = R.color.blue_dark),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = filteredMovies,
+                        key = { movie -> movie.title }
+                    ) { movie ->
+                        MovieHorizontalCard(
+                            movie = movie,
+                            onClick = { onMovieClick(movie) }
+                        )
+                    }
                 }
             }
         }

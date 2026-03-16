@@ -174,7 +174,7 @@ fun HomeScreen(
                                 Text(
                                     text = movie.title,
                                     modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Black,
+                                    color = colorResource(id = R.color.blue_dark),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
                                     textAlign = TextAlign.Center,
@@ -313,7 +313,7 @@ fun MovieCarouselItem(
                     .fillMaxWidth()
                     .height(200.dp)
                     .clip(RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp))
-                    .background(Color.LightGray),
+                    .background(colorResource(id = R.color.blue_mid)),
                 contentScale = ContentScale.Crop,
                 onSuccess = {
                     println("Image ok = ${movie.imageUrl}")
@@ -342,7 +342,7 @@ fun MovieCarouselItem(
                     Text(
                         text = movie.category,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
+                        color = colorResource(id = R.color.blue_mid),
                         maxLines = 1
                     )
                 }
