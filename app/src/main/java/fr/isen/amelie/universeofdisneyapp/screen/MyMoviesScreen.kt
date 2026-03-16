@@ -58,6 +58,9 @@ import coil3.compose.AsyncImage
 import fr.isen.amelie.universeofdisneyapp.R
 import fr.isen.amelie.universeofdisneyapp.activity.MovieStatus
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun MyMoviesScreen(
@@ -69,30 +72,35 @@ fun MyMoviesScreen(
 
     val user = auth.currentUser
     val email = user?.email.orEmpty()
-    val displayName = email.substringBefore("@").ifBlank { "User" }
+    var displayName by remember { mutableStateOf(email.substringBefore("@").ifBlank { "User" }) }
+    var avatarKey by remember { mutableStateOf<String?>(null) }
 
     var selectedCategory by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(user?.uid) {
         if (user != null) {
             database
                 .child("users")
                 .child(user.uid)
-                .child("movieStatuses")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        movieStatuses.clear()
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    displayName = snapshot.child("firstName").getValue(String::class.java)
+                        ?: email.substringBefore("@").ifBlank { "User" }
 
-                        for (movieData in snapshot.children) {
-                            val movieStatus = movieData.getValue(MovieStatus::class.java)
-                            if (movieStatus != null) {
-                                movieStatuses.add(movieStatus)
-                            }
+                    avatarKey = snapshot.child("avatar").getValue(String::class.java)
+
+                    movieStatuses.clear()
+                    snapshot.child("movieStatuses").children.forEach { movieData ->
+                        val movieStatus = movieData.getValue(MovieStatus::class.java)
+                        if (movieStatus != null) {
+                            movieStatuses.add(movieStatus)
                         }
                     }
-                    override fun onCancelled(error: DatabaseError) {
-                    }
-                })
+                }
+                .addOnFailureListener {
+                    displayName = email.substringBefore("@").ifBlank { "User" }
+                    avatarKey = null
+                }
         }
     }
     val watchedMovies = movieStatuses.filter { it.viewStatus == "watched" }
@@ -124,7 +132,8 @@ fun MyMoviesScreen(
             .navigationBarsPadding()
     ) {
         MyMoviesHeaderCard(
-            displayName = displayName
+            displayName = displayName,
+            avatarKey = avatarKey
         )
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -237,14 +246,25 @@ fun MyMoviesScreen(
 
 @Composable
 fun MyMoviesHeaderCard(
-    displayName: String
+    displayName: String,
+    avatarKey: String?
 ) {
+    val avatarMap = mapOf(
+        "avatar_ironman" to R.drawable.avengers,
+        "avatar_spiderman" to R.drawable.marvel,
+        "avatar_elise" to R.drawable.pdp_elise,
+        "avatar_emeric" to R.drawable.pdp_emeric,
+        "avatar_amelie" to R.drawable.pdp_amelie,
+        "avatar_lucas" to R.drawable.pdp_lucas,
+        )
+    val avatarRes = avatarKey?.let { avatarMap[it] }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
-    ) {
+    )
+    {
         Box(
             modifier = Modifier
                 .size(64.dp)
@@ -254,12 +274,22 @@ fun MyMoviesHeaderCard(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = displayName.take(1).uppercase(),
-                color = colorResource(id = R.color.blue_dark),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.ExtraBold
-            )
+            if (avatarRes != null) {
+                Image(
+                    painter = painterResource(id = avatarRes),
+                    contentDescription = "Profile avatar",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            } else {
+                Text(
+                    text = displayName.take(1).uppercase(),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = colorResource(id = R.color.blue_dark)
+                )
+            }
         }
         Spacer(modifier = Modifier.width(16.dp))
 

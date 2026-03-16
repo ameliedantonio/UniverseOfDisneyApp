@@ -46,7 +46,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import fr.isen.amelie.universeofdisneyapp.R
+import androidx.compose.foundation.Image
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditProfileScreen(
     onBackClick: () -> Unit
@@ -60,20 +68,35 @@ fun EditProfileScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
+    var showAvatarPicker by remember { mutableStateOf(false) }
+    var savedAvatar by remember { mutableStateOf<String?>(null) }
+    var tempSelectedAvatar by remember { mutableStateOf<String?>(null) }
+    val avatarMap = mapOf(
+        "avatar_ironman" to R.drawable.avengers,
+        "avatar_spiderman" to R.drawable.marvel,
+        "avatar_elise" to R.drawable.pdp_elise,
+        "avatar_emeric" to R.drawable.pdp_emeric,
+        "avatar_amelie" to R.drawable.pdp_amelie,
+        "avatar_lucas" to R.drawable.pdp_lucas,
+        )
 
     LaunchedEffect(user?.uid) {
         val currentUser = user ?: return@LaunchedEffect
 
         database.child("users")
             .child(currentUser.uid)
-            .child("firstName")
             .get()
             .addOnSuccessListener { snapshot ->
-                name = snapshot.getValue(String::class.java)
+                name = snapshot.child("firstName").getValue(String::class.java)
                     ?: email.substringBefore("@").ifBlank { "User" }
+
+                savedAvatar = snapshot.child("avatar").getValue(String::class.java)
+                tempSelectedAvatar = savedAvatar
             }
             .addOnFailureListener {
                 name = email.substringBefore("@").ifBlank { "User" }
+                savedAvatar = null
+                tempSelectedAvatar = null
             }
     }
     val isSuccess = message.contains("success", ignoreCase = true)
@@ -151,15 +174,28 @@ fun EditProfileScreen(
                         Box(
                             modifier = Modifier
                                 .size(64.dp)
-                                .background(Color.White, CircleShape),
+                                .clip(CircleShape)
+                                .background(Color.White, CircleShape)
+                                .clickable { showAvatarPicker = true },
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = name.take(1).uppercase().ifBlank { "U" },
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = colorResource(id = R.color.blue_dark)
-                            )
+                            val avatarRes = tempSelectedAvatar?.let { avatarMap[it] }
+                            if (avatarRes != null) {
+                                Image(
+                                    painter = painterResource(id = avatarRes),
+                                    contentDescription = "Profile picture",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape)
+                                )
+                            } else {
+                                Text(
+                                    text = name.take(1).uppercase().ifBlank { "U" },
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colorResource(id = R.color.blue_dark)
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.size(16.dp))
 
@@ -332,17 +368,22 @@ fun EditProfileScreen(
 
                     isSaving = true
 
+                    val updates = mapOf(
+                        "firstName" to name,
+                        "avatar" to tempSelectedAvatar
+                    )
                     database.child("users")
                         .child(currentUser.uid)
-                        .child("firstName")
-                        .setValue(name)
+                        .updateChildren(updates)
                         .addOnCompleteListener { nameTask ->
 
                             if (!nameTask.isSuccessful) {
                                 isSaving = false
-                                message = "Error while updating first name"
+                                message = "Error while updating profile"
                                 return@addOnCompleteListener
                             }
+
+                            savedAvatar = tempSelectedAvatar
 
                             if (newPassword.isNotEmpty()) {
                                 currentUser.updatePassword(newPassword)
@@ -351,14 +392,14 @@ fun EditProfileScreen(
                                         message = if (passwordTask.isSuccessful) {
                                             newPassword = ""
                                             confirmPassword = ""
-                                            "First name and password updated successfully"
+                                            "Profile updated successfully"
                                         } else {
-                                            "First name updated, but password change failed"
+                                            "Profile updated, but password change failed"
                                         }
                                     }
                             } else {
                                 isSaving = false
-                                message = "First name updated successfully"
+                                   message = "Profile updated successfully"
                             }
                         }
                 },
@@ -377,6 +418,41 @@ fun EditProfileScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
+        }
+        if (showAvatarPicker) {
+            AlertDialog(
+                onDismissRequest = { showAvatarPicker = false },
+                title = { Text("Choose a profile picture") },
+                text = {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        maxItemsInEachRow = 3
+                    ) {
+                        avatarMap.forEach { (avatarKey, avatarRes) ->
+                            Image(
+                                painter = painterResource(id = avatarRes),
+                                contentDescription = avatarKey,
+                                modifier = Modifier
+                                    .size(72.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        tempSelectedAvatar = avatarKey
+                                        showAvatarPicker = false
+                                    }
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { showAvatarPicker = false }
+                    ) {
+                        Text("Close")
+                    }
+                }
+            )
         }
     }
 }

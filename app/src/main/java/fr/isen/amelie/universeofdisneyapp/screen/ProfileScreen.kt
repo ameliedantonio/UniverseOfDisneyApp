@@ -1,5 +1,6 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,10 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
@@ -63,17 +66,20 @@ fun ProfileScreen(
     val user = auth.currentUser
     val email = user?.email.orEmpty()
     var displayName by remember { mutableStateOf("") }
-    LaunchedEffect(Unit) {
+    var avatarKey by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(user?.uid) {
         if (user != null) {
             database.child("users")
                 .child(user.uid)
-                .child("firstName")
                 .get()
                 .addOnSuccessListener { snapshot ->
-                    displayName = snapshot.getValue(String::class.java) ?: ""
+                    displayName = snapshot.child("firstName").getValue(String::class.java) ?: ""
+                    avatarKey = snapshot.child("avatar").getValue(String::class.java)
                 }
                 .addOnFailureListener {
                     displayName = ""
+                    avatarKey = null
                 }
         }
     }
@@ -87,6 +93,7 @@ fun ProfileScreen(
         ProfileHeaderCard(
             displayName = displayName,
             email = email,
+            avatarKey = avatarKey,
             onEditProfileClick = onEditProfileClick
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -148,6 +155,7 @@ fun ProfileScreen(
 fun ProfileHeaderCard(
     displayName: String,
     email: String,
+    avatarKey: String?,
     onEditProfileClick: () -> Unit
 ) {
     val gradient = Brush.linearGradient(
@@ -156,6 +164,16 @@ fun ProfileHeaderCard(
             colorResource(id = R.color.blue_light)
         )
     )
+    val avatarMap = mapOf(
+        "avatar_ironman" to R.drawable.avengers,
+        "avatar_spiderman" to R.drawable.marvel,
+        "avatar_elise" to R.drawable.pdp_elise,
+        "avatar_emeric" to R.drawable.pdp_emeric,
+        "avatar_amelie" to R.drawable.pdp_amelie,
+        "avatar_lucas" to R.drawable.pdp_lucas,
+    )
+    val avatarRes = avatarKey?.let { avatarMap[it] }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -204,12 +222,22 @@ fun ProfileHeaderCard(
                     Box(
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = displayName.take(1).uppercase(),
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = colorResource(id = R.color.blue_dark)
-                        )
+                        if (avatarRes != null) {
+                            Image(
+                                painter = painterResource(id = avatarRes),
+                                contentDescription = "Profile avatar",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
+                        } else {
+                            Text(
+                                text = displayName.take(1).uppercase(),
+                                style = MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = colorResource(id = R.color.blue_dark)
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(12.dp))
