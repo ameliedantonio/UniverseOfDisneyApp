@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import fr.isen.amelie.universeofdisneyapp.R
 import androidx.compose.foundation.background
 
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.IconButton
 @Composable
 fun SearchScreen(
     onMovieClick: (Movie) -> Unit
@@ -82,7 +84,7 @@ fun SearchScreen(
         ) {
             OutlinedTextField(
                 value = searchText,
-                onValueChange = { input -> searchText = input.filterNot { it.isWhitespace() } },
+                onValueChange = { input -> searchText = input },
                 placeholder = { Text("Search for a movie...") },
                 singleLine = true,
                 leadingIcon = {
@@ -90,6 +92,16 @@ fun SearchScreen(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search"
                     )
+                },
+                trailingIcon = {
+                    if (searchText.isNotEmpty()) {
+                        IconButton(onClick = { searchText = "" }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Clear search"
+                            )
+                        }
+                    }
                 },
                 shape = RoundedCornerShape(28.dp),
                 colors = OutlinedTextFieldDefaults.colors(
