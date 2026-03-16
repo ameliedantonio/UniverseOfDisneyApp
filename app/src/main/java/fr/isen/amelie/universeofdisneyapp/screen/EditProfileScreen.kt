@@ -1,7 +1,7 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,12 +18,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +44,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextOverflow
 import fr.isen.amelie.universeofdisneyapp.R
 
 @Composable
@@ -73,7 +76,6 @@ fun EditProfileScreen(
                 name = email.substringBefore("@").ifBlank { "User" }
             }
     }
-
     val isSuccess = message.contains("success", ignoreCase = true)
 
     val blueGradient = Brush.linearGradient(
@@ -95,18 +97,39 @@ fun EditProfileScreen(
                 .padding(20.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = "Edit profile",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Color.White, CircleShape)
+                        .clickable { onBackClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = colorResource(id = R.color.blue_dark)
+                    )
+                }
+                Text(
+                    text = "Edit profile",
+                    modifier = Modifier.align(Alignment.Center),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             Text(
                 text = "Update your personal information and security settings",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f)
+                color = Color.White.copy(alpha = 0.8f),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
             )
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -187,7 +210,7 @@ fun EditProfileScreen(
                             placeholder = { Text("Enter your name") },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
                         )
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -354,27 +377,6 @@ fun EditProfileScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
-
-            OutlinedButton(
-                onClick = onBackClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(2.dp, colorResource(id = R.color.blue_dark)),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = colorResource(id = R.color.blue_dark)
-                )
-            ) {
-                Text(
-                    text = "Back",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = colorResource(id = R.color.blue_dark)
-                )
-            }
-
         }
     }
 }

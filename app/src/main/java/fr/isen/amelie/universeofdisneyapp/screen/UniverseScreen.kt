@@ -161,7 +161,7 @@ fun UniverseGenreSelector(
             .padding(horizontal = 16.dp, vertical = 16.dp)
             .height(52.dp)
             .background(
-                color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.22f),
+                color = Color.White.copy(alpha = 0.22f),
                 shape = RoundedCornerShape(50)
             )
             .padding(4.dp)
@@ -172,7 +172,7 @@ fun UniverseGenreSelector(
                 .width(selectorWidth)
                 .fillMaxHeight()
                 .background(
-                    color = colorResource(id = R.color.blue_soft_white),
+                    color = Color.White,
                     shape = RoundedCornerShape(50)
                 )
         )
@@ -282,7 +282,7 @@ fun UniverseCard(
                 Text(
                     text = "$count movies",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = colorResource(id = R.color.blue_dark)
+                    color = colorResource(id = R.color.blue_mid)
                 )
             }
         }

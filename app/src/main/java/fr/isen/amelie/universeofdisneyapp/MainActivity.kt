@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -114,7 +116,7 @@ fun AppNavigation() {
                             },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = colorResource(id = R.color.blue_light),
-                                unselectedIconColor = colorResource(id = R.color.blue_mid),
+                                unselectedIconColor = colorResource(id = R.color.blue_dark),
                                 indicatorColor = Color.Transparent
                             )
                         )
@@ -133,7 +135,7 @@ fun AppNavigation() {
                             },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = colorResource(id = R.color.blue_light),
-                                unselectedIconColor = colorResource(id = R.color.blue_mid),
+                                unselectedIconColor = colorResource(id = R.color.blue_dark),
                                 indicatorColor = Color.Transparent
                             )
                         )
@@ -157,7 +159,7 @@ fun AppNavigation() {
                                             color = if (isSelected)
                                                 colorResource(id = R.color.blue_light)
                                             else
-                                                colorResource(id = R.color.blue_mid),
+                                                colorResource(id = R.color.blue_dark),
                                             shape = CircleShape
                                         ),
                                     contentAlignment = Alignment.Center
@@ -165,7 +167,7 @@ fun AppNavigation() {
                                     Icon(
                                         Icons.Default.Movie,
                                         contentDescription = "My movies",
-                                        tint = colorResource(id = R.color.blue_soft_white),
+                                        tint = Color.White,
                                     )
                                 }
                             }
@@ -185,7 +187,7 @@ fun AppNavigation() {
                             },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = colorResource(id = R.color.blue_light),
-                                unselectedIconColor = colorResource(id = R.color.blue_mid),
+                                unselectedIconColor = colorResource(id = R.color.blue_dark),
                                 indicatorColor = Color.Transparent
                             )
                         )
@@ -204,7 +206,7 @@ fun AppNavigation() {
                             },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = colorResource(id = R.color.blue_light),
-                                unselectedIconColor = colorResource(id = R.color.blue_mid),
+                                unselectedIconColor = colorResource(id = R.color.blue_dark),
                                 indicatorColor = Color.Transparent
                             )
                         )
@@ -396,7 +398,9 @@ fun AppTopBar(title: String) {
     CenterAlignedTopAppBar(
         title = {
             Text(text = title,
-                color = colorResource(id = R.color.blue_soft_white),
+                color = Color.White,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

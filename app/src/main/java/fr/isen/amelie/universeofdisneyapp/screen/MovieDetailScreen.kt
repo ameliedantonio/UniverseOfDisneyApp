@@ -223,7 +223,7 @@ fun MovieDetailScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .background(
-                        color = colorResource(id = R.color.blue_soft_white),
+                        color = Color.White,
                         shape = CircleShape
                     )
                     .clickable { onBackClick() },
@@ -240,9 +240,9 @@ fun MovieDetailScreen(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(horizontal = 56.dp),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = colorResource(id = R.color.blue_soft_white),
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -258,12 +258,12 @@ fun MovieDetailScreen(
                 contentDescription = movie.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(150.dp)
-                    .height(220.dp)
+                    .width(170.dp)
+                    .height(240.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .border(
                         width = 2.dp,
-                        color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.75f),
+                        color = Color.White.copy(alpha = 0.75f),
                         shape = RoundedCornerShape(20.dp)
                     )
             )
@@ -288,14 +288,14 @@ fun MovieDetailScreen(
             text = "Synopsis",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.blue_soft_white)
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(10.dp))
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(22.dp),
             colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.92f)
+                containerColor = Color.White.copy(alpha = 0.92f)
             ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -311,7 +311,7 @@ fun MovieDetailScreen(
             text = "Your status",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.blue_soft_white)
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(
@@ -378,7 +378,7 @@ fun MovieDetailScreen(
             text = "Users who want to get rid of this movie",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.blue_soft_white)
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(12.dp))
         if (sharedUsers.isEmpty()) {
@@ -386,7 +386,7 @@ fun MovieDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.90f)
+                    containerColor = Color.White.copy(alpha = 0.90f)
                 )
             ) {
                 Text(
@@ -448,7 +448,7 @@ fun StatusCard(
     )
     val animatedTextColor by animateColorAsState(
         targetValue = if (isSelected) {
-            colorResource(id = R.color.blue_soft_white)
+            Color.White
         } else {
             colorResource(id = R.color.blue_dark)
         },
@@ -501,7 +501,7 @@ fun MovieMiniInfoCard(
         ),
         border = BorderStroke(
             1.5.dp,
-            colorResource(id = R.color.blue_soft_white).copy(alpha = 0.9f)
+            Color.White.copy(alpha = 0.9f)
         )
     ) {
         Box(
@@ -510,7 +510,7 @@ fun MovieMiniInfoCard(
         ) {
             Text(
                 text = text,
-                color = colorResource(id = R.color.blue_soft_white),
+                color = Color.White,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,

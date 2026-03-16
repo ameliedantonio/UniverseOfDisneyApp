@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -76,7 +77,7 @@ fun RegisterScreen(
                 Card(
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(
-                        containerColor = colorResource(id = R.color.blue_soft_white)
+                        containerColor = Color.White
                     )
                 ) {
                     Box(
@@ -98,14 +99,14 @@ fun RegisterScreen(
                 text = "CREATE AN ACCOUNT",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = colorResource(id = R.color.blue_soft_white)
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Sign up to continue",
                 style = MaterialTheme.typography.bodyLarge,
-                color = colorResource(id = R.color.blue_soft_white)
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(30.dp))
         }
@@ -117,7 +118,7 @@ fun RegisterScreen(
             shape = RoundedCornerShape(28.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.blue_soft_white)
+                containerColor = Color.White
             )
         ) {
             Column(
@@ -133,8 +134,8 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(id = R.color.blue_soft_white),
-                        unfocusedContainerColor = colorResource(id = R.color.blue_soft_white),
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
                         focusedTextColor = colorResource(id = R.color.blue_dark),
                         unfocusedTextColor = colorResource(id = R.color.blue_mid),
                         focusedBorderColor = colorResource(id = R.color.blue_dark),
@@ -153,8 +154,8 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(id = R.color.blue_soft_white),
-                        unfocusedContainerColor = colorResource(id = R.color.blue_soft_white),
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
                         focusedTextColor = colorResource(id = R.color.blue_dark),
                         unfocusedTextColor = colorResource(id = R.color.blue_mid),
                         focusedBorderColor = colorResource(id = R.color.blue_dark),
@@ -174,8 +175,8 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(id = R.color.blue_soft_white),
-                        unfocusedContainerColor = colorResource(id = R.color.blue_soft_white),
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
                         focusedTextColor = colorResource(id = R.color.blue_dark),
                         unfocusedTextColor = colorResource(id = R.color.blue_mid),
                         focusedBorderColor = colorResource(id = R.color.blue_dark),
@@ -243,7 +244,7 @@ fun RegisterScreen(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.blue_mid),
-                        contentColor = colorResource(id = R.color.blue_soft_white)
+                        contentColor = Color.White
                     )
                 ) {
                     Text(

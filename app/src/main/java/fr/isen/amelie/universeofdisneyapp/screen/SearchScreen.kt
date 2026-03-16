@@ -22,16 +22,17 @@ import fr.isen.amelie.universeofdisneyapp.AppTopBar
 import fr.isen.amelie.universeofdisneyapp.activity.Movie
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.ui.res.colorResource
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
-import fr.isen.amelie.universeofdisneyapp.R
 import androidx.compose.foundation.background
 
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.colorResource
+import fr.isen.amelie.universeofdisneyapp.R
+
 @Composable
 fun SearchScreen(
     onMovieClick: (Movie) -> Unit
@@ -90,7 +91,8 @@ fun SearchScreen(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
+                        contentDescription = "Search",
+                        tint = colorResource(id = R.color.blue_dark)
                     )
                 },
                 trailingIcon = {
@@ -98,7 +100,8 @@ fun SearchScreen(
                         IconButton(onClick = { searchText = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Clear search"
+                                contentDescription = "Clear search",
+                                tint = colorResource(id = R.color.blue_dark)
                             )
                         }
                     }
@@ -112,11 +115,10 @@ fun SearchScreen(
                     .fillMaxWidth()
                     .height(56.dp)
                     .background(
-                        color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.92f),
+                        color = Color.White.copy(alpha = 0.92f),
                         shape = RoundedCornerShape(28.dp)
                     )
             )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(

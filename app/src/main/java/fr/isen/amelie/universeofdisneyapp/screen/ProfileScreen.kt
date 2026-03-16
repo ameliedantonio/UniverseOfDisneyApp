@@ -1,6 +1,5 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -192,9 +191,9 @@ fun ProfileHeaderCard(
             ) {
                 Text(
                     text = "Profile",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.ExtraBold
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Surface(
@@ -265,54 +264,6 @@ fun ProfileActionCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.blue_dark)
-            )
-        }
-    }
-}
-
-@Composable
-fun EmptyStateCard(
-    title: String,
-    subtitle: String
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.15f)
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(
-            1.dp,
-            colorResource(id = R.color.blue_soft_white).copy(alpha = 0.5f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(26.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Movie,
-                contentDescription = null,
-                tint = colorResource(id = R.color.blue_soft_white),
-                modifier = Modifier.size(42.dp)
-            )
-            Spacer(Modifier.height(14.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue_soft_white)
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.7f)
             )
         }
     }

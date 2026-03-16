@@ -1,6 +1,5 @@
 package fr.isen.amelie.universeofdisneyapp.screen
 
-import android.R.attr.maxLines
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +40,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import coil3.compose.AsyncImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -58,6 +62,7 @@ fun SharedGetRidScreen(
     val database = FirebaseDatabase.getInstance().reference
     val movies = remember { mutableStateListOf<Movie>() }
     val movieUsers = remember { mutableStateMapOf<String, List<MovieOwnerInfo>>() }
+    var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         database.child("shared_get_rid")
@@ -96,6 +101,9 @@ fun SharedGetRidScreen(
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
+    val filteredMovies = movies.filter {
+        it.title.contains(searchQuery, ignoreCase = true)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +119,7 @@ fun SharedGetRidScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .background(
-                        color = colorResource(id = R.color.blue_soft_white),
+                        color = Color.White,
                         shape = CircleShape
                     )
                     .clickable { onBackClick() },
@@ -126,13 +134,39 @@ fun SharedGetRidScreen(
             Text(
                 text = "Shared get rid",
                 modifier = Modifier.align(Alignment.Center),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = colorResource(id = R.color.blue_soft_white),
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { newValue ->
+                searchQuery = newValue
+                    .replace("\n", "")
+                    .replace("\r", "")
+                    .replace("\t", "")
+            },
+            label = { Text("Search movies") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                focusedTextColor = colorResource(id = R.color.blue_dark),
+                unfocusedTextColor = colorResource(id = R.color.blue_dark),
+                focusedBorderColor = colorResource(id = R.color.blue_dark),
+                unfocusedBorderColor = colorResource(id = R.color.blue_dark),
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = colorResource(id = R.color.blue_dark),
+                cursorColor = colorResource(id = R.color.blue_dark)
+            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
         if (movies.isEmpty()) {
             Card(
                 modifier = Modifier
@@ -146,6 +180,20 @@ fun SharedGetRidScreen(
                     color = colorResource(id = R.color.blue_dark)
                 )
             }
+        }
+        else if (filteredMovies.isEmpty() && searchQuery.isNotBlank()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Text(
+                    text = "No movies found for \"$searchQuery\"",
+                    modifier = Modifier.padding(16.dp),
+                    color = colorResource(id = R.color.blue_dark)
+                )
+            }
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -153,7 +201,7 @@ fun SharedGetRidScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(movies) { movie ->
+                items(filteredMovies) { movie ->
                     val users = movieUsers[movie.id] ?: emptyList()
                     Card(
                         modifier = Modifier
@@ -193,7 +241,7 @@ fun SharedGetRidScreen(
                                 users.forEach { user ->
                                     Text(
                                         text = user.userEmail,
-                                        color = colorResource(id = R.color.grey)
+                                        color = colorResource(id = R.color.blue_mid)
                                     )
                                 }
                             }

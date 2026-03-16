@@ -155,7 +155,7 @@ fun WantToGetRidScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .background(
-                        color = colorResource(id = R.color.blue_soft_white),
+                        color = Color.White,
                         shape = CircleShape
                     )
                     .clickable { onBackClick() },
@@ -170,29 +170,34 @@ fun WantToGetRidScreen(
             Text(
                 text = "Want to get rid",
                 modifier = Modifier.align(Alignment.Center),
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
-                color = colorResource(id = R.color.blue_soft_white),
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = { input -> searchQuery = input.filterNot { it.isWhitespace() } },
+            onValueChange = { newValue ->
+                searchQuery = newValue
+                    .replace("\n", "")
+                    .replace("\r", "")
+                    .replace("\t", "")
+            },
             label = { Text("Search owned movies") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = colorResource(id = R.color.blue_soft_white),
-                unfocusedContainerColor = colorResource(id = R.color.blue_soft_white),
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
                 focusedTextColor = colorResource(id = R.color.blue_dark),
                 unfocusedTextColor = colorResource(id = R.color.blue_dark),
                 focusedBorderColor = colorResource(id = R.color.blue_dark),
                 unfocusedBorderColor = colorResource(id = R.color.blue_dark),
-                focusedLabelColor = colorResource(id = R.color.blue_soft_white),
+                focusedLabelColor = Color.White,
                 unfocusedLabelColor = colorResource(id = R.color.blue_dark),
                 cursorColor = colorResource(id = R.color.blue_dark)
             )
@@ -245,7 +250,7 @@ fun WantToGetRidScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Delete,
+                        imageVector = Icons.Default.DeleteSweep,
                         contentDescription = "No movies",
                         tint = colorResource(id = R.color.blue_dark),
                         modifier = Modifier.size(40.dp)
@@ -335,7 +340,7 @@ fun WantToGetRidScreen(
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = movieStatus.releaseDate,
-                                    color = colorResource(id = R.color.grey)
+                                    color = colorResource(id = R.color.blue_mid)
                                 )
                             }
                             IconButton(

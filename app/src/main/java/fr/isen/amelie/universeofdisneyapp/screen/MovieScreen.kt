@@ -113,7 +113,7 @@ fun MovieScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(colorResource(id = R.color.blue_soft_white))
+                    .background(Color.White)
                     .clickable { onBackToUniverses() },
                 contentAlignment = Alignment.Center
             ) {
@@ -128,7 +128,7 @@ fun MovieScreen(
                 text = "Discover movies : $universeName",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue_soft_white)
+                color = Color.White
             )
         }
         Column(
@@ -137,7 +137,7 @@ fun MovieScreen(
             Text(
                 text = "${movies.size} movies",
                 style = MaterialTheme.typography.bodyMedium,
-                color = colorResource(id = R.color.blue_soft_white)
+                color = Color.White
             )
         }
         Spacer(modifier = Modifier.height(14.dp))
@@ -186,9 +186,9 @@ fun CategoryChip(
         shape = RoundedCornerShape(50.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
-                colorResource(id = R.color.blue_soft_white)
+                Color.White
             } else {
-                colorResource(id = R.color.blue_soft_white).copy(alpha = 0.22f)
+                Color.White.copy(alpha = 0.22f)
             }
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -199,7 +199,7 @@ fun CategoryChip(
             color = if (isSelected) {
                 colorResource(id = R.color.blue_dark)
             } else {
-                colorResource(id = R.color.blue_soft_white)
+                Color.White
             },
             fontWeight = FontWeight.Bold,
             maxLines = 1,

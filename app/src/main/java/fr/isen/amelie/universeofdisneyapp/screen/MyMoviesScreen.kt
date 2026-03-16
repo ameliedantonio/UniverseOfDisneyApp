@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -181,7 +182,7 @@ fun MyMoviesScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.blue_soft_white)
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -200,7 +201,7 @@ fun MyMoviesScreen(
             } else if (displayedMovies.isEmpty()) {
                 item {
                     GlassInfoCard(
-                        text = "No movies in this category"
+                        text = "No movies in this category",
                     )
                 }
             } else {
@@ -248,7 +249,7 @@ fun MyMoviesHeaderCard(
             modifier = Modifier
                 .size(64.dp)
                 .background(
-                    color = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.95f),
+                    color = Color.White.copy(alpha = 0.95f),
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
@@ -265,16 +266,16 @@ fun MyMoviesHeaderCard(
         Column {
             Text(
                 text = "My Movies",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue_soft_white)
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = "Organize your personal collection",
                 style = MaterialTheme.typography.bodyMedium,
-                color = colorResource(id = R.color.blue_soft_white)
+                color = Color.White
             )
         }
     }
@@ -298,13 +299,13 @@ fun MyMoviesCategoryCard(
         targetValue = if (isSelected) {
             colorResource(id = R.color.blue_dark)
         } else {
-            colorResource(id = R.color.blue_soft_white).copy(alpha = 0.90f)
+            Color.White.copy(alpha = 0.90f)
         },
         label = "cardColor"
     )
     val animatedTextColor by animateColorAsState(
         targetValue = if (isSelected) {
-            colorResource(id = R.color.blue_soft_white)
+            Color.White
         } else {
             colorResource(id = R.color.blue_dark)
         },
@@ -370,7 +371,7 @@ fun MyMovieItemCard(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.95f)
+            containerColor = Color.White.copy(alpha = 0.95f)
         )
     ) {
         Row(
@@ -418,7 +419,7 @@ fun GlassInfoCard(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(id = R.color.blue_soft_white).copy(alpha = 0.75f)
+            containerColor = Color.White.copy(alpha = 0.75f)
         )
     ) {
         Text(
