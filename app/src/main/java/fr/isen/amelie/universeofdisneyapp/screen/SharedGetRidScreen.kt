@@ -247,7 +247,18 @@ fun SharedGetRidScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = colorResource(id = R.color.blue_dark),
-                                    maxLines = 2
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = if (users.size > 1) {
+                                        "${users.size} users want to get rid of it"
+                                    } else {
+                                        "${users.size} user wants to get rid of it"
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = colorResource(id = R.color.blue_mid)
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 users.forEach { user ->
