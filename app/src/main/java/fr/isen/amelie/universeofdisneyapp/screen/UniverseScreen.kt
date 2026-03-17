@@ -22,10 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.LocalMovies
 import androidx.compose.material.icons.filled.MovieFilter
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -246,7 +244,7 @@ fun UniverseCard(
                     contentDescription = universe.name,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(65.dp)
                         .clip(CircleShape)
                 )
             } else {
@@ -327,7 +325,7 @@ fun GenreCard(
                     imageVector = Icons.Default.MovieFilter,
                     contentDescription = genre,
                     tint = colorResource(id = R.color.blue_dark),
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
             Spacer(modifier = Modifier.width(14.dp))
