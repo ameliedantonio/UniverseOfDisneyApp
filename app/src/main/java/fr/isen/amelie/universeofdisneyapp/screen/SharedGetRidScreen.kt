@@ -45,6 +45,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -63,6 +67,14 @@ fun SharedGetRidScreen(
     val movies = remember { mutableStateListOf<Movie>() }
     val movieUsers = remember { mutableStateMapOf<String, List<MovieOwnerInfo>>() }
     var searchQuery by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    fun contactUserByEmail(email: String) {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$email")
+        }
+        context.startActivity(intent)
+    }
 
     LaunchedEffect(Unit) {
         database.child("shared_get_rid")
@@ -239,10 +251,47 @@ fun SharedGetRidScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 users.forEach { user ->
-                                    Text(
-                                        text = user.userEmail,
-                                        color = colorResource(id = R.color.blue_mid)
-                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = user.userEmail,
+                                            color = colorResource(id = R.color.blue_mid)
+                                        )
+                                        Card(
+                                            modifier = Modifier
+                                                .clickable {
+                                                    contactUserByEmail(user.userEmail)
+                                                },
+                                            shape = RoundedCornerShape(50),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = colorResource(id = R.color.blue_light).copy(alpha = 0.25f)
+                                            ),
+                                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                        ) {
+                                            Row(
+                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Email,
+                                                    contentDescription = "Contact",
+                                                    tint = colorResource(id = R.color.blue_dark),
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Text(
+                                                    text = "Contact",
+                                                    color = colorResource(id = R.color.blue_dark),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    fontWeight = FontWeight.SemiBold
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
                                 }
                             }
                         }

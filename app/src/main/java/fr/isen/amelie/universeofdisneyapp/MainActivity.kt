@@ -373,11 +373,10 @@ fun AppNavigation() {
                         onBackClick = {
                             navController.popBackStack()
                         },
-                        onMovieClick = { movie ->
-                            selectedMovie = movie
-                            navController.navigate("movieDetail")
-                        }
-                    )
+                    ) { movie ->
+                        selectedMovie = movie
+                        navController.navigate("movieDetail")
+                    }
                 }
                 composable("movieDetail") {
                     MovieDetailScreen(
