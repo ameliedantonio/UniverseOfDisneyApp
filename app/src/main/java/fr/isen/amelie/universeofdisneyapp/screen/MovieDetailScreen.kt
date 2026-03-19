@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,6 +51,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.Star
 import coil3.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -74,6 +74,11 @@ fun MovieDetailScreen(
     var universeName by remember { mutableStateOf(movie.universeId) }
     var currentViewStatus by remember { mutableStateOf("") }
     var currentOwnershipStatus by remember { mutableStateOf("") }
+    var userRating by remember { mutableStateOf(0) }
+    var averageRating by remember { mutableStateOf(0f) }
+    var ratingsCount by remember { mutableStateOf(0) }
+
+
 
     fun loadSharedGetRidUsers() {
         database.child("shared_get_rid")
@@ -185,6 +190,98 @@ fun MovieDetailScreen(
                 ).show()
             }
     }
+    fun saveMovieRating(rating: Int) {
+        val user = auth.currentUser
+        if (user == null) {
+            Toast.makeText(
+                context,
+                "No user logged in",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        if (rating == userRating) {
+            database.child("movie_ratings")
+                .child(movie.id)
+                .child(user.uid)
+                .removeValue()
+                .addOnSuccessListener {
+                    userRating = 0
+                    database.child("movie_ratings")
+                        .child(movie.id)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                var sum = 0
+                                var count = 0
+                                for (child in snapshot.children) {
+                                    val value = child.child("rating").getValue(Int::class.java) ?: 0
+                                    if (value in 1..5) {
+                                        sum += value
+                                        count++
+                                    }
+                                }
+                                ratingsCount = count
+                                averageRating = if (count > 0) sum.toFloat() / count else 0f
+                            }
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    Toast.makeText(
+                        context,
+                        "Rating removed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+        } else {
+            val ratingData = mapOf(
+                "userEmail" to (user.email ?: ""),
+                "rating" to rating
+            )
+            database.child("movie_ratings")
+                .child(movie.id)
+                .child(user.uid)
+                .setValue(ratingData)
+                .addOnSuccessListener {
+                    userRating = rating
+                    database.child("movie_ratings")
+                        .child(movie.id)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                var sum = 0
+                                var count = 0
+                                for (child in snapshot.children) {
+                                    val value = child.child("rating").getValue(Int::class.java) ?: 0
+                                    if (value in 1..5) {
+                                        sum += value
+                                        count++
+                                    }
+                                }
+                                ratingsCount = count
+                                averageRating = if (count > 0) sum.toFloat() / count else 0f
+                            }
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    Toast.makeText(
+                        context,
+                        "Rating saved",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        context,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+        }
+    }
     LaunchedEffect(movie.id) {
         loadSharedGetRidUsers()
         database.child("universes")
@@ -202,9 +299,38 @@ fun MovieDetailScreen(
                 .child(movie.id)
                 .get()
                 .addOnSuccessListener { snapshot ->
-                    currentViewStatus = snapshot.child("viewStatus").getValue(String::class.java) ?: ""
-                    currentOwnershipStatus = snapshot.child("ownershipStatus").getValue(String::class.java) ?: ""                }
+                    currentViewStatus =
+                        snapshot.child("viewStatus").getValue(String::class.java) ?: ""
+                    currentOwnershipStatus =
+                        snapshot.child("ownershipStatus").getValue(String::class.java) ?: ""
+                }
+            database.child("movie_ratings")
+                .child(movie.id)
+                .child(user.uid)
+                .child("rating")
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    userRating = snapshot.getValue(Int::class.java) ?: 0
+                }
         }
+        database.child("movie_ratings")
+            .child(movie.id)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var sum = 0
+                    var count = 0
+                    for (child in snapshot.children) {
+                        val rating = child.child("rating").getValue(Int::class.java) ?: 0
+                        if (rating in 1..5) {
+                            sum += rating
+                            count++
+                        }
+                    }
+                    ratingsCount = count
+                    averageRating = if (count > 0) sum.toFloat() / count else 0f
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
     Column(
         modifier = Modifier
@@ -305,6 +431,58 @@ fun MovieDetailScreen(
                 color = colorResource(id = R.color.blue_dark),
                 style = MaterialTheme.typography.bodyMedium
             )
+        }
+        Spacer(modifier = Modifier.height(18.dp))
+        Text(
+            text = "Rating",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White.copy(alpha = 0.92f)
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = if (ratingsCount > 0) {
+                        "Average: %.1f / 5 (%d ratings)".format(averageRating, ratingsCount)
+                    } else {
+                        "No ratings yet"
+                    },
+                    color = colorResource(id = R.color.blue_dark),
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    for (star in 1..5) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Star $star",
+                            tint = if (star <= userRating) {
+                                colorResource(id = R.color.yellow_stars)
+                            } else {
+                                Color.LightGray
+                            },
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clickable { saveMovieRating(star) }
+                        )
+                    }
+                }
+            }
         }
         Spacer(modifier = Modifier.height(18.dp))
         Text(

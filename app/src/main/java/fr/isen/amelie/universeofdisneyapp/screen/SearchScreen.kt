@@ -48,6 +48,7 @@ fun SearchScreen(
 ) {
     val database = FirebaseDatabase.getInstance().reference
     val allMovies = remember { mutableStateListOf<Movie>() }
+    val averageRatings = remember { mutableStateMapOf<String, Float>() }
     var searchText by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -72,8 +73,28 @@ fun SearchScreen(
                 override fun onCancelled(error: DatabaseError) {
                 }
             })
+        database.child("movie_ratings")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    averageRatings.clear()
+                    for (movieSnapshot in snapshot.children) {
+                        val movieId = movieSnapshot.key ?: continue
+                        var sum = 0
+                        var count = 0
+                        for (userSnapshot in movieSnapshot.children) {
+                            val rating = userSnapshot.child("rating").getValue(Int::class.java) ?: 0
+                            if (rating in 1..5) {
+                                sum += rating
+                                count++
+                            }
+                        }
+                        averageRatings[movieId] =
+                            if (count > 0) sum.toFloat() / count else 0f
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
-
     val filteredMovies = if (searchText.isBlank()) {
         emptyList()
     } else {
@@ -81,12 +102,10 @@ fun SearchScreen(
             it.title.trim().contains(searchText.trim(), ignoreCase = true)
         }
     }
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         AppTopBar(title = "Search")
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -205,6 +224,7 @@ fun SearchScreen(
                     ) { movie ->
                         MovieHorizontalCard(
                             movie = movie,
+                            averageRating = averageRatings[movie.id] ?: 0f,
                             onClick = { onMovieClick(movie) }
                         )
                     }

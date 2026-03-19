@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -63,7 +64,9 @@ fun MovieScreen(
 ) {
     val database = FirebaseDatabase.getInstance().reference
     val movies = remember { mutableStateListOf<Movie>() }
+    val averageRatings = remember { mutableStateMapOf<String, Float>() }
     var selectedCategory by remember { mutableStateOf("All") }
+
     LaunchedEffect(universeId, genre) {
         database.child("movies")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -84,6 +87,28 @@ fun MovieScreen(
                 }
                 override fun onCancelled(error: DatabaseError) {
                 }
+            })
+        database.child("movie_ratings")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    averageRatings.clear()
+                    for (movieSnapshot in snapshot.children) {
+                        val movieId = movieSnapshot.key ?: continue
+                        var sum = 0
+                        var count = 0
+                        for (userSnapshot in movieSnapshot.children) {
+                            val rating =
+                                userSnapshot.child("rating").getValue(Int::class.java) ?: 0
+                            if (rating in 1..5) {
+                                sum += rating
+                                count++
+                            }
+                        }
+                        averageRatings[movieId] =
+                            if (count > 0) sum.toFloat() / count else 0f
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
     val categories = listOf("All") + movies
@@ -165,6 +190,7 @@ fun MovieScreen(
             items(filteredMovies) { movie ->
                 MovieHorizontalCard(
                     movie = movie,
+                    averageRating = averageRatings[movie.id] ?: 0f,
                     onClick = { onMovieClick(movie) }
                 )
             }
@@ -211,6 +237,7 @@ fun CategoryChip(
 @Composable
 fun MovieHorizontalCard(
     movie: Movie,
+    averageRating: Float,
     onClick: () -> Unit
 ) {
     Card(
@@ -225,7 +252,8 @@ fun MovieHorizontalCard(
         )
     ) {
         Row(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
                 model = movie.imageUrl,
@@ -237,6 +265,7 @@ fun MovieHorizontalCard(
             )
             Column(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxHeight()
                     .padding(14.dp),
                 verticalArrangement = Arrangement.Center
@@ -267,6 +296,24 @@ fun MovieHorizontalCard(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(end = 14.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = if (averageRating > 0f) {
+                        "${String.format("%.1f", averageRating)}/5 ⭐"
+                    } else {
+                        " "
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.blue_dark)
+                )
             }
         }
     }
