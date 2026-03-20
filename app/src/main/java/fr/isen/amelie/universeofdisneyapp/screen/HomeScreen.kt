@@ -63,6 +63,8 @@ fun HomeScreen(
     var scienceFictionMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var animationMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var actionMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
+    var marvelMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
+    var starwarsMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         if (userId != null) {
@@ -94,8 +96,14 @@ fun HomeScreen(
                 animationMovies = movies.filter { movie ->
                     movie.genre.contains("Animation", ignoreCase = true)
                 }
+                marvelMovies = movies.filter { movie ->
+                    movie.universeId.contains("marvel", ignoreCase = true)
+                }
                 actionMovies = movies.filter { movie ->
                     movie.genre.contains("Action", ignoreCase = true)
+                }
+                starwarsMovies = movies.filter { movie ->
+                    movie.universeId.contains("starwars", ignoreCase = true)
                 }
                 if (movies.isNotEmpty()) {
                     randomMovie = movies.random()
@@ -272,6 +280,25 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
+                text = "Marvel",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(marvelMovies) { movie ->
+                    MovieCarouselItem(
+                        movie = movie,
+                        onClick = { onMovieClick(movie) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
                 text = "Action",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
@@ -283,6 +310,25 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(actionMovies) { movie ->
+                    MovieCarouselItem(
+                        movie = movie,
+                        onClick = { onMovieClick(movie) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Star Wars",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(starwarsMovies) { movie ->
                     MovieCarouselItem(
                         movie = movie,
                         onClick = { onMovieClick(movie) }
