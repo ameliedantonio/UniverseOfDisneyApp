@@ -325,7 +325,7 @@ fun MovieHorizontalCard(
                     }
                 } else {
                     Text(
-                        text = "--",
+                        text = " ",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = colorResource(id = R.color.blue_mid)
