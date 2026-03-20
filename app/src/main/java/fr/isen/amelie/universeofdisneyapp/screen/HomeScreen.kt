@@ -63,7 +63,7 @@ fun HomeScreen(
     var scienceFictionMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var animationMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var actionMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
-    var marvelMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
+    var harrypotterMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
     var starwarsMovies by remember { mutableStateOf<List<Movie>>(emptyList()) }
 
     LaunchedEffect(Unit) {
@@ -96,8 +96,8 @@ fun HomeScreen(
                 animationMovies = movies.filter { movie ->
                     movie.genre.contains("Animation", ignoreCase = true)
                 }
-                marvelMovies = movies.filter { movie ->
-                    movie.universeId.contains("marvel", ignoreCase = true)
+                harrypotterMovies = movies.filter { movie ->
+                    movie.universeId.contains("harrypotter", ignoreCase = true)
                 }
                 actionMovies = movies.filter { movie ->
                     movie.genre.contains("Action", ignoreCase = true)
@@ -280,7 +280,7 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Marvel",
+                text = "Harry Potter",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -290,7 +290,7 @@ fun HomeScreen(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(marvelMovies) { movie ->
+                items(harrypotterMovies) { movie ->
                     MovieCarouselItem(
                         movie = movie,
                         onClick = { onMovieClick(movie) }
