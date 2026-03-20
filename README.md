@@ -22,7 +22,7 @@ Android application for managing and discovering movies, built in Kotlin with Fi
 
 ## Overview
 
-AL Prime (UniverseOfDisney) is an Android mobile app that lets users browse movies from different universes (Avatar, Disney, Marvel, Pixar, Star Wars), rate them, manage their personal collection, and share movies they want to get rid of.
+AL Prime (UniverseOfDisney) is an Android mobile app that lets users browse movies from different universes (Avatar, Disney, Harry Potter, Marvel, Pirates of the Caribbean, Pixar, Star Wars), rate them, manage their personal collection, and share movies they want to get rid of.
 
 ---
 
@@ -92,7 +92,7 @@ AL Prime (UniverseOfDisney) is an Android mobile app that lets users browse movi
 - Automatic greeting title *"Hi [First name]"*
 - Main card: a random movie with its poster, title and a *"See Details"* button
 - Top 10 movies carousel
-- Category carousels: Recommended for you, Science-Fiction, Animation, Action, Star Wars
+- Category carousels: Recommended for you, Science-Fiction, Animation, Harry Potter, Action, Star Wars
 - Tapping a movie opens `MovieDetailScreen.kt` with a back button
 
 </details>
@@ -106,7 +106,7 @@ AL Prime (UniverseOfDisney) is an Android mobile app that lets users browse movi
 <br>
 
 - Sliding selector bar to switch between two lists: Universes and Genres
-- Universes (5 cards): Avatar, Disney, Marvel, Pixar, Star Wars - each with logo, title and movie count
+- Universes (7 cards): Avatar, Disney, Harry Potter, Marvel, Pirates of the Caribbean, Pixar, Star Wars - each with logo, title and movie count
 - Genres (4 cards): Action, Adventure, Animation, Science-Fiction - each with a film icon, title and movie count
 - Tapping a category opens `MoviesScreen.kt`
 
